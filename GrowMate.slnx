@@ -8,4 +8,5 @@
     <Project Path="src/GrowMate.Infrastructure/GrowMate.Infrastructure.csproj" />
     <Project Path="src/GrowMate.Presentation/GrowMate.Presentation.csproj" />
   </Folder>
+  <Folder Name="/tests/" />
 </Solution>
