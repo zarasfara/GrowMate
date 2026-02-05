@@ -1,0 +1,7 @@
+﻿services:
+  growmate.presentation:
+    image: growmate.presentation
+    build:
+      context: .
+      dockerfile: src/GrowMate.Presentation/Dockerfile
+
