@@ -1,7 +1,26 @@
-﻿services:
+services:
   growmate.presentation:
     image: growmate.presentation
     build:
       context: .
       dockerfile: src/GrowMate.Presentation/Dockerfile
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=growmate_db;Username=growmate;Password=growmate_password
 
+  db:
+    image: postgres:16-alpine
+    container_name: growmate-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: growmate_db
+      POSTGRES_USER: growmate
+      POSTGRES_PASSWORD: growmate_password
+    volumes:
+      - growmate_pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  growmate_pgdata:
