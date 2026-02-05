@@ -3,6 +3,9 @@
     <File Path="compose.yaml" />
   </Folder>
   <Folder Name="/src/">
+    <Project Path="src/GrowMate.Applicatoin/GrowMate.Applicatoin.csproj" />
+    <Project Path="src/GrowMate.Domain/GrowMate.Domain.csproj" />
+    <Project Path="src/GrowMate.Infrastructure/GrowMate.Infrastructure.csproj" />
     <Project Path="src/GrowMate.Presentation/GrowMate.Presentation.csproj" />
   </Folder>
 </Solution>
