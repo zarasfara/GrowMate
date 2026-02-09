@@ -6,7 +6,7 @@ public sealed class Plant
 {
     public int Id { get; set; }
 
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
 
     public string? Variety { get; set; }
 
@@ -16,7 +16,7 @@ public sealed class Plant
 
     public PlantType Type { get; set; }
 
-    public string UserId { get; set; } = string.Empty;
+    public required string UserId { get; set; }
     
-    public ICollection<GardenTask> Tasks { get; set; } = new List<GardenTask>();
+    public ICollection<GardenTask> Tasks { get; set; } = [];
 }
