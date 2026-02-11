@@ -31,7 +31,7 @@ public sealed class PlantEntityTypeConfiguration : IEntityTypeConfiguration<Plan
         builder.Property(p => p.PlantingDate)
             .IsRequired()
             .HasColumnType("date")
-            .HasDefaultValueSql("GETDATE()")
+            .HasDefaultValueSql("NOW()")
             .HasComment("Дата посадки");
 
         builder.Property(p => p.Type)

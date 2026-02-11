@@ -31,7 +31,7 @@ public sealed class GardenTaskEntityTypeConfiguration : IEntityTypeConfiguration
         builder.Property(t => t.DueDate)
             .IsRequired()
             .HasColumnType("date")
-            .HasDefaultValueSql("GETDATE()")
+            .HasDefaultValueSql("NOW()")
             .HasComment("Срок выполнения");
 
         builder.Property(t => t.IsCompleted)

@@ -7,7 +7,11 @@ services:
     depends_on:
       - db
     environment:
+      - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=growmate_db;Username=growmate;Password=growmate_password
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
 
   db:
     image: postgres:16-alpine
