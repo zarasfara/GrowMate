@@ -1,3 +1,4 @@
+using System;
 using GrowMate.Domain.Plants;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -37,7 +38,7 @@ public sealed class PlantEntityTypeConfiguration : IEntityTypeConfiguration<Plan
             .IsRequired()
             .HasConversion(
                 v => v.ToString(),
-                v => (PlantType)Enum.Parse(typeof(PlantType), v))
+                v => Enum.Parse<PlantType>(v))
             .HasComment("Тип растения");
 
         // Связь с пользователем
