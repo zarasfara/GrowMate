@@ -1,14 +1,16 @@
 using GrowMate.Domain.GardenBeds;
 using GrowMate.Domain.GardenTasks;
 using GrowMate.Domain.Plants;
+using GrowMate.Domain.Users;
 using GrowMate.Infrastructure.GardenBeds;
 using GrowMate.Infrastructure.GardenTasks;
 using GrowMate.Infrastructure.Plants;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GrowMate.Infrastructure;
 
-public sealed class ApplicationContext : DbContext
+public sealed class ApplicationContext : IdentityDbContext<User>
 {
     public ApplicationContext(DbContextOptions<ApplicationContext> options)
         : base(options)
