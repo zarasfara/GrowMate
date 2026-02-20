@@ -1,0 +1,103 @@
+﻿@page
+@model GardenBedDetailsModel
+@{
+    ViewData["Title"] = Model.GardenBed?.Name ?? "Детали грядки";
+}
+
+<div class="container mt-4">
+    @if (Model.GardenBed != null)
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light">
+                        <h1 class="h3 mb-0">
+                            <span>
+                                @switch (Model.GardenBed.Type)
+                                {
+                                    case GrowMate.Domain.GardenBeds.GardenBedType.OpenGround:
+                                        <span>🌾</span>
+                                        break;
+                                    case GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse:
+                                        <span>🏠</span>
+                                        break;
+                                    case GrowMate.Domain.GardenBeds.GardenBedType.Container:
+                                        <span>🪴</span>
+                                        break;
+                                    default:
+                                        <span>📦</span>
+                                        break;
+                                }
+                            </span>
+                            @Model.GardenBed.Name
+                        </h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <h5>Информация о грядке</h5>
+                                <dl class="row">
+                                    <dt class="col-sm-6">Тип:</dt>
+                                    <dd class="col-sm-6">
+                                        <span class="badge bg-primary">@GetGardenBedTypeName(Model.GardenBed.Type)</span>
+                                    </dd>
+                                    <dt class="col-sm-6">Растений:</dt>
+                                    <dd class="col-sm-6">
+                                        <span class="badge bg-success">@Model.GardenBed.PlantCount</span>
+                                    </dd>
+                                    <dt class="col-sm-6">Создана:</dt>
+                                    <dd class="col-sm-6">@Model.GardenBed.CreatedAt.ToString("dd.MM.yyyy")</dd>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light">
+                        <a href="/EditGardenBed?id=@Model.GardenBed.Id" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Изменить
+                        </a>
+                        <a href="/GardenBeds" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Вернуться
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Plants Section -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">🪴 Растения на грядке</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.GardenBed.PlantCount > 0)
+                        {
+                            <p>Здесь будут отображаться растения (функция в разработке)</p>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info" role="alert">
+                                <i class="bi bi-info-circle"></i> На этой грядке еще нет растений.
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
+        </div>
+    }
+</div>
+
+@{
+    string GetGardenBedTypeName(GrowMate.Domain.GardenBeds.GardenBedType type) => type switch
+    {
+        GrowMate.Domain.GardenBeds.GardenBedType.OpenGround => "Открытый грунт",
+        GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse => "Теплица",
+        GrowMate.Domain.GardenBeds.GardenBedType.Container => "Контейнер",
+        GrowMate.Domain.GardenBeds.GardenBedType.Other => "Другое",
+        _ => "Неизвестно"
+    };
+}
+

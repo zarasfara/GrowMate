@@ -1,0 +1,155 @@
+﻿@page
+@model GardenBedsModel
+@{
+    ViewData["Title"] = "Мои грядки";
+}
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h2">🌱 Мои грядки</h1>
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#createGardenBedModal">
+            <i class="bi bi-plus-circle"></i> Добавить грядку
+        </button>
+    </div>
+
+    <!-- Success/Error Messages -->
+    @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Garden Beds Grid -->
+    @if (Model.GardenBeds.Count > 0)
+    {
+        <div class="row g-4">
+            @foreach (var gardenBed in Model.GardenBeds)
+            {
+                <div class="col-sm-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0 hover-lift">
+                        <div class="card-header bg-light">
+                            <h5 class="card-title mb-0">
+                                <span>
+                                    @switch (gardenBed.Type)
+                                    {
+                                        case GrowMate.Domain.GardenBeds.GardenBedType.OpenGround:
+                                            <span>🌾</span>
+                                            break;
+                                        case GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse:
+                                            <span>🏠</span>
+                                            break;
+                                        case GrowMate.Domain.GardenBeds.GardenBedType.Container:
+                                            <span>🪴</span>
+                                            break;
+                                        default:
+                                            <span>📦</span>
+                                            break;
+                                    }
+                                </span>
+                                @gardenBed.Name
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Тип:</strong> @GetGardenBedTypeName(gardenBed.Type)
+                            </p>
+                            <p class="card-text">
+                                <strong>Растений:</strong> <span class="badge bg-success">@gardenBed.PlantCount</span>
+                            </p>
+                        </div>
+                        <div class="card-footer bg-light d-flex gap-2">
+                            <a href="/GardenBedDetails?id=@gardenBed.Id" class="btn btn-sm btn-primary flex-grow-1">
+                                <i class="bi bi-eye"></i> Просмотр
+                            </a>
+                            <a href="/EditGardenBed?id=@gardenBed.Id" class="btn btn-sm btn-warning">
+                                <i class="bi bi-pencil"></i> Изменить
+                            </a>
+                            <form method="post" asp-page-handler="Delete" style="display:inline;">
+                                <input type="hidden" name="id" value="@gardenBed.Id" />
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Вы уверены? Это удалит грядку и всех растений на ней.');">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5" role="alert">
+            <h4 class="alert-heading">📋 Нет грядок</h4>
+            <p>У вас еще нет грядок. Создайте первую грядку, чтобы начать отслеживать растения!</p>
+            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#createGardenBedModal">
+                <i class="bi bi-plus-circle"></i> Создать первую грядку
+            </button>
+        </div>
+    }
+</div>
+
+<!-- Create Garden Bed Modal -->
+<div class="modal fade" id="createGardenBedModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">🌱 Создать новую грядку</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" asp-page-handler="Create">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="gardenBedName" class="form-label">Название грядки</label>
+                        <input type="text" class="form-control" id="gardenBedName" 
+                               asp-for="NewGardenBed.Name" placeholder="Например: Помидоры" required>
+                        <span asp-validation-for="NewGardenBed.Name" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gardenBedType" class="form-label">Тип грядки</label>
+                        <select class="form-select" id="gardenBedType" asp-for="NewGardenBed.Type">
+                            <option value="0">🌾 Открытый грунт</option>
+                            <option value="1">🏠 Теплица</option>
+                            <option value="2">🪴 Контейнер</option>
+                            <option value="3">📦 Другое</option>
+                        </select>
+                        <span asp-validation-for="NewGardenBed.Type" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg"></i> Создать
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+@{
+    string GetGardenBedTypeName(GrowMate.Domain.GardenBeds.GardenBedType type) => type switch
+    {
+        GrowMate.Domain.GardenBeds.GardenBedType.OpenGround => "Открытый грунт",
+        GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse => "Теплица",
+        GrowMate.Domain.GardenBeds.GardenBedType.Container => "Контейнер",
+        GrowMate.Domain.GardenBeds.GardenBedType.Other => "Другое",
+        _ => "Неизвестно"
+    };
+}
+

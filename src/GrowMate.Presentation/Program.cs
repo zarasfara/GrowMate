@@ -1,5 +1,6 @@
 using GrowMate.Domain.Users;
 using GrowMate.Infrastructure;
+using GrowMate.Presentation.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register application services
+builder.Services.AddScoped<GardenBedService>();
 
 // Настройка Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>

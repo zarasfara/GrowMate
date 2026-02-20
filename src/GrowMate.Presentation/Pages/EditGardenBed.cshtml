@@ -1,0 +1,60 @@
+﻿@page "{id:int}"
+@model EditGardenBedModel
+@{
+    ViewData["Title"] = "Изменить грядку";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light">
+                    <h1 class="h3 mb-0">✏️ Изменить грядку</h1>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    }
+
+                    <form method="post">
+                        <div class="mb-3">
+                            <label for="gardenBedName" class="form-label">Название грядки</label>
+                            <input type="text" class="form-control" id="gardenBedName" 
+                                   asp-for="EditGardenBed.Name" required>
+                            <span asp-validation-for="EditGardenBed.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="gardenBedType" class="form-label">Тип грядки</label>
+                            <select class="form-select" id="gardenBedType" asp-for="EditGardenBed.Type">
+                                <option value="0">🌾 Открытый грунт</option>
+                                <option value="1">🏠 Теплица</option>
+                                <option value="2">🪴 Контейнер</option>
+                                <option value="3">📦 Другое</option>
+                            </select>
+                            <span asp-validation-for="EditGardenBed.Type" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-success flex-grow-1">
+                                <i class="bi bi-check-lg"></i> Сохранить
+                            </button>
+                            <a href="/GardenBeds" class="btn btn-secondary flex-grow-1">
+                                <i class="bi bi-arrow-left"></i> Отмена
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

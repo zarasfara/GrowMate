@@ -5,18 +5,17 @@
 }
 
 <!-- Hero Section -->
-<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 0; margin-bottom: 2rem; position: relative; overflow: hidden;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url(&quot;data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E&quot;); opacity: 0.1;"></div>
-    <div class="container" style="position: relative; z-index: 1;">
+<div class="hero-section">
+    <div class="container hero-content">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3" style="color: white !important;">🌱 Добро пожаловать в GrowMate!</h1>
-                <p class="lead mb-4" style="color: rgba(255, 255, 255, 0.95);">Ваш умный помощник в управлении садом. Отслеживайте растения, планируйте задачи и выращивайте больше!</p>
+                <h1 class="display-4 fw-bold mb-3 hero-title">🌱 Добро пожаловать в GrowMate!</h1>
+                <p class="lead mb-4 hero-subtitle">Ваш умный помощник в управлении садом. Отслеживайте растения, планируйте задачи и выращивайте больше!</p>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="#" class="btn btn-light btn-lg px-4">
+                    <a href="/Plants" class="btn btn-light btn-lg px-4">
                         <i class="bi bi-plus-circle"></i> Добавить растение
                     </a>
-                    <a href="#" class="btn btn-outline-light btn-lg px-4" style="color: white; border-color: white;">
+                    <a href="/GardenTasks" class="btn btn-outline-light btn-lg px-4" style="color: white; border-color: white;">
                         <i class="bi bi-calendar-check"></i> Создать задачу
                     </a>
                 </div>
@@ -34,8 +33,8 @@
         <div class="col-sm-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 hover-lift">
                 <div class="card-body text-center">
-                    <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fs-1">🌿</span>
+                    <div class="stat-icon success">
+                        <span>🌿</span>
                     </div>
                     <h3 class="fw-bold text-success mb-1">@Model.TotalGardenBeds</h3>
                     <p class="text-muted mb-0">Грядок</p>
@@ -45,8 +44,8 @@
         <div class="col-sm-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 hover-lift">
                 <div class="card-body text-center">
-                    <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fs-1">🪴</span>
+                    <div class="stat-icon primary">
+                        <span>🪴</span>
                     </div>
                     <h3 class="fw-bold text-primary mb-1">@Model.TotalPlants</h3>
                     <p class="text-muted mb-0">Растений</p>
@@ -56,8 +55,8 @@
         <div class="col-sm-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 hover-lift">
                 <div class="card-body text-center">
-                    <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fs-1">⏰</span>
+                    <div class="stat-icon warning">
+                        <span>⏰</span>
                     </div>
                     <h3 class="fw-bold text-warning mb-1">@Model.PendingTasks</h3>
                     <p class="text-muted mb-0">Ожидающих задач</p>
@@ -67,8 +66,8 @@
         <div class="col-sm-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100 hover-lift">
                 <div class="card-body text-center">
-                    <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                        <span class="fs-1">✅</span>
+                    <div class="stat-icon info">
+                        <span>✅</span>
                     </div>
                     <h3 class="fw-bold text-info mb-1">@Model.CompletedTasksToday</h3>
                     <p class="text-muted mb-0">Выполнено сегодня</p>
@@ -103,7 +102,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="mb-0 fw-bold">🌿 Мои грядки</h5>
-                    <a href="#" class="btn btn-success btn-sm">
+                    <a href="/GardenBeds" class="btn btn-success btn-sm">
                         <i class="bi bi-plus-circle"></i> Добавить грядку
                     </a>
                 </div>
@@ -138,7 +137,7 @@
                                                 <i class="bi bi-geo-alt"></i> Грядка #@bed.Id
                                             </p>
                                             <div class="d-grid">
-                                                <a href="#" class="btn btn-outline-primary btn-sm">
+                                                <a href="/GardenBedDetails?id=@bed.Id" class="btn btn-outline-primary btn-sm">
                                                     Управление <i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </div>
@@ -154,7 +153,7 @@
                             <div class="mb-3 opacity-50" style="font-size: 4rem;">🌱</div>
                             <h5 class="text-muted">У вас пока нет грядок</h5>
                             <p class="text-muted">Создайте свою первую грядку и начните выращивать!</p>
-                            <a href="#" class="btn btn-success">Создать грядку</a>
+                            <a href="/GardenBeds" class="btn btn-success">Создать грядку</a>
                         </div>
                     }
                 </div>
@@ -166,7 +165,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="mb-0 fw-bold">🪴 Мои растения</h5>
-                    <a href="#" class="btn btn-primary btn-sm">
+                    <a href="/Plants" class="btn btn-primary btn-sm">
                         <i class="bi bi-plus-circle"></i> Добавить растение
                     </a>
                 </div>
@@ -180,8 +179,8 @@
                                     <div class="card h-100 border-0 shadow-sm hover-lift">
                                         <div class="card-body">
                                             <div class="text-center mb-3">
-                                                <div class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 70px; height: 70px;">
-                                                    <span style="font-size: 2.5rem;">
+                                                <div class="plant-emoji-circle">
+                                                    <span>
                                                         @(plant.Type switch
                                                         {
                                                             GrowMate.Domain.Plants.PlantType.Vegetable => "🥕",
@@ -220,7 +219,7 @@
                             <div class="mb-3 opacity-50" style="font-size: 4rem;">🪴</div>
                             <h5 class="text-muted">У вас пока нет растений</h5>
                             <p class="text-muted">Добавьте первое растение и следите за его ростом!</p>
-                            <a href="#" class="btn btn-primary">Добавить растение</a>
+                            <a href="/Plants" class="btn btn-primary">Добавить растение</a>
                         </div>
                     }
                 </div>
@@ -232,7 +231,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="mb-0 fw-bold">📋 Предстоящие задачи</h5>
-                    <a href="#" class="btn btn-warning btn-sm">
+                    <a href="/GardenTasks" class="btn btn-warning btn-sm">
                         <i class="bi bi-plus-circle"></i> Создать задачу
                     </a>
                 </div>
@@ -307,7 +306,7 @@
                             <div class="mb-3 opacity-50" style="font-size: 4rem;">📋</div>
                             <h5 class="text-muted">Нет предстоящих задач</h5>
                             <p class="text-muted">Создайте задачу, чтобы не забыть важные дела!</p>
-                            <a href="#" class="btn btn-warning">Создать задачу</a>
+                            <a href="/GardenTasks" class="btn btn-warning">Создать задачу</a>
                         </div>
                     }
                 </div>
@@ -320,30 +319,30 @@
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center h-100 hover-lift">
                 <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 3rem;">📊</div>
+                    <div class="quick-action-icon">📊</div>
                     <h5 class="fw-bold">Статистика</h5>
                     <p class="text-muted">Просматривайте детальную статистику роста ваших растений</p>
-                    <a href="#" class="btn btn-outline-primary">Перейти</a>
+                    <a href="/GardenBeds" class="btn btn-outline-primary">Перейти</a>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center h-100 hover-lift">
                 <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 3rem;">📅</div>
+                    <div class="quick-action-icon">📅</div>
                     <h5 class="fw-bold">Календарь</h5>
                     <p class="text-muted">Планируйте посадки и задачи в удобном календаре</p>
-                    <a href="#" class="btn btn-outline-primary">Перейти</a>
+                    <a href="/GardenTasks" class="btn btn-outline-primary">Перейти</a>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card border-0 shadow-sm text-center h-100 hover-lift">
                 <div class="card-body py-4">
-                    <div class="mb-3" style="font-size: 3rem;">📚</div>
+                    <div class="quick-action-icon">📚</div>
                     <h5 class="fw-bold">База знаний</h5>
                     <p class="text-muted">Изучайте советы и рекомендации по выращиванию</p>
-                    <a href="#" class="btn btn-outline-primary">Перейти</a>
+                    <a href="/GardenBeds" class="btn btn-outline-primary">Перейти</a>
                 </div>
             </div>
         </div>
