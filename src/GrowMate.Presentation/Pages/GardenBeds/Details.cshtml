@@ -65,18 +65,64 @@
 
                 <!-- Plants Section -->
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-light">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">🪴 Растения на грядке</h5>
+                        <a asp-page="/Plants/Create" asp-route-gardenBedId="@Model.GardenBed.Id" class="btn btn-sm btn-success">
+                            <i class="bi bi-plus-circle"></i> Добавить посадку
+                        </a>
                     </div>
                     <div class="card-body">
-                        @if (Model.GardenBed.PlantCount > 0)
+                        @if (Model.Plants.Any())
                         {
-                            <p>Здесь будут отображаться растения (функция в разработке)</p>
+                            <div class="list-group">
+                                @foreach (var plant in Model.Plants)
+                                {
+                                    <a asp-page="/Plants/Details" asp-route-id="@plant.Id" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1">
+                                                    @if (plant.IsUnique)
+                                                    {
+                                                        <i class="bi bi-star-fill text-warning"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-collection text-info"></i>
+                                                    }
+                                                    <strong>@plant.Name</strong>
+                                                    @if (!string.IsNullOrEmpty(plant.Variety))
+                                                    {
+                                                        <small class="text-muted">(@plant.Variety)</small>
+                                                    }
+                                                </h6>
+                                                <p class="mb-1">
+                                                    <small>
+                                                        <span class="badge bg-secondary">@plant.Type.ToString()</span>
+                                                        @if (plant.IsUnique)
+                                                        {
+                                                            <span class="badge bg-warning text-dark">Уникальное</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-info">@plant.Quantity шт.</span>
+                                                        }
+                                                        <span class="badge bg-light text-dark">@plant.DaysFromPlanting дн. от посадки</span>
+                                                    </small>
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <i class="bi bi-chevron-right"></i>
+                                            </div>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
                         }
                         else
                         {
                             <div class="alert alert-info" role="alert">
                                 <i class="bi bi-info-circle"></i> На этой грядке еще нет растений.
+                                <a asp-page="/Plants/Create" asp-route-gardenBedId="@Model.GardenBed.Id" class="alert-link">Добавить первую посадку</a>
                             </div>
                         }
                     </div>

@@ -1,3 +1,4 @@
+using GrowMate.Applicatoin.Services;
 using GrowMate.Application.Services;
 using GrowMate.Domain.Users;
 using GrowMate.Infrastructure;
@@ -35,6 +36,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 
 // Register application services
 builder.Services.AddScoped<GardenBedService>();
+builder.Services.AddScoped<PlantService>();
 
 // Настройка Identity
 builder.Services.AddIdentity<User, IdentityRole>(options =>

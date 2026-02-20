@@ -1,4 +1,6 @@
-﻿using GrowMate.Application.Services;
+﻿﻿using GrowMate.Applicatoin.DTOs;
+using GrowMate.Applicatoin.Services;
+using GrowMate.Application.Services;
 using GrowMate.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -9,15 +11,18 @@ namespace GrowMate.Presentation.Pages.GardenBeds;
 public class DetailsModel : PageModel
 {
     private readonly GardenBedService _gardenBedService;
+    private readonly PlantService _plantService;
     private readonly UserManager<User> _userManager;
 
-    public DetailsModel(GardenBedService gardenBedService, UserManager<User> userManager)
+    public DetailsModel(GardenBedService gardenBedService, PlantService plantService, UserManager<User> userManager)
     {
         _gardenBedService = gardenBedService;
+        _plantService = plantService;
         _userManager = userManager;
     }
 
     public GardenBedDto? GardenBed { get; set; }
+    public List<PlantDto> Plants { get; set; } = [];
     public string? ErrorMessage { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int id)
@@ -32,6 +37,8 @@ public class DetailsModel : PageModel
             ErrorMessage = "Грядка не найдена.";
             return NotFound();
         }
+
+        Plants = await _plantService.GetPlantsByGardenBedAsync(id, user.Id);
 
         return Page();
     }

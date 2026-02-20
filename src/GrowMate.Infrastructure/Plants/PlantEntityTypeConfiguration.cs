@@ -41,6 +41,16 @@ public sealed class PlantEntityTypeConfiguration : IEntityTypeConfiguration<Plan
                 v => Enum.Parse<PlantType>(v))
             .HasComment("Тип растения");
 
+        builder.Property(p => p.Quantity)
+            .IsRequired()
+            .HasDefaultValue(1)
+            .HasComment("Количество растений (для групповых посадок)");
+
+        builder.Property(p => p.IsUnique)
+            .IsRequired()
+            .HasDefaultValue(false)
+            .HasComment("Является ли растение уникальным (true) или групповым (false)");
+
         // Связь с пользователем
         builder.Property(p => p.UserId)
             .IsRequired()

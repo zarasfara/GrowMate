@@ -17,6 +17,17 @@ public sealed class Plant
 
     public PlantType Type { get; set; }
 
+    /// <summary>
+    ///     Количество растений данного типа (для групповых посадок, например, 20 помидоров).
+    ///     Для уникальных растений (розы, деревья) = 1.
+    /// </summary>
+    public int Quantity { get; set; } = 1;
+
+    /// <summary>
+    ///     Является ли это уникальной посадкой (true для роз, деревьев) или групповой (false для помидоров).
+    /// </summary>
+    public bool IsUnique { get; set; }
+
     public required string UserId { get; set; }
 
     /// <summary>

@@ -1,0 +1,165 @@
+﻿@page "/Plants/Details/{id:int}"
+@model GrowMate.Presentation.Pages.Plants.DetailsModel
+@{
+    ViewData["Title"] = Model.Plant.Name;
+}
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="mb-0">
+                            @if (Model.Plant.IsUnique)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            else
+                            {
+                                <i class="bi bi-collection"></i>
+                            }
+                            @Model.Plant.Name
+                        </h2>
+                        <span class="badge bg-light text-dark fs-6">@Model.Plant.Type.ToString()</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="bi bi-flower1"></i> Тип посадки
+                                </h6>
+                                @if (Model.Plant.IsUnique)
+                                {
+                                    <h5><span class="badge bg-warning text-dark">Уникальное растение</span></h5>
+                                }
+                                else
+                                {
+                                    <h5><span class="badge bg-info">Групповая посадка</span></h5>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="bi bi-123"></i> Количество
+                                </h6>
+                                <h5>@Model.Plant.Quantity шт.</h5>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Plant.Variety))
+                    {
+                        <div class="info-item mb-3">
+                            <h6 class="text-muted mb-1">
+                                <i class="bi bi-tag"></i> Сорт
+                            </h6>
+                            <p class="fs-5">@Model.Plant.Variety</p>
+                        </div>
+                    }
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="bi bi-grid-3x3"></i> Грядка
+                                </h6>
+                                <p class="fs-5">
+                                    <a asp-page="/GardenBeds/Details" asp-route-id="@Model.Plant.GardenBedId" 
+                                       class="text-decoration-none">
+                                        @Model.Plant.GardenBedName
+                                    </a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <h6 class="text-muted mb-1">
+                                    <i class="bi bi-calendar-event"></i> Дата посадки
+                                </h6>
+                                <p class="fs-5">@Model.Plant.PlantingDate.ToString("dd.MM.yyyy")</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-item mb-3">
+                        <h6 class="text-muted mb-1">
+                            <i class="bi bi-clock-history"></i> Дней от посадки
+                        </h6>
+                        <h4><span class="badge bg-secondary">@Model.Plant.DaysFromPlanting дн.</span></h4>
+                    </div>
+
+                    @if (Model.Plant.TemplateName != null)
+                    {
+                        <div class="info-item mb-3">
+                            <h6 class="text-muted mb-1">
+                                <i class="bi bi-bookmark-fill text-primary"></i> Шаблон
+                            </h6>
+                            <p class="fs-5">@Model.Plant.TemplateName</p>
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(Model.Plant.Description))
+                    {
+                        <div class="info-item mb-3">
+                            <h6 class="text-muted mb-1">
+                                <i class="bi bi-journal-text"></i> Описание / Заметки
+                            </h6>
+                            <div class="card">
+                                <div class="card-body bg-light">
+                                    <p class="mb-0">@Model.Plant.Description</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <a asp-page="/Plants/Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Вернуться к списку
+                        </a>
+                        <div>
+                            <a asp-page="/Plants/Edit" asp-route-id="@Model.Plant.Id" class="btn btn-warning">
+                                <i class="bi bi-pencil"></i> Изменить
+                            </a>
+                            <form method="post" asp-page-handler="Delete" asp-route-id="@Model.Plant.Id" class="d-inline">
+                                <button type="submit" class="btn btn-danger" 
+                                        onclick="return confirm('Вы уверены, что хотите удалить эту посадку?')">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Здесь в будущем можно добавить раздел с задачами для этого растения -->
+            <div class="card mt-4 shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-check"></i> Задачи по уходу
+                    </h5>
+                </div>
+                <div class="card-body text-center py-4">
+                    <p class="text-muted">Раздел задач будет добавлен позже</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

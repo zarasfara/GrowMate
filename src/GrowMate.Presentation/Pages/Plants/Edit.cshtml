@@ -1,0 +1,145 @@
+﻿@page "/Plants/Edit/{id:int}"
+@model GrowMate.Presentation.Pages.Plants.EditModel
+@{
+    ViewData["Title"] = "Редактировать посадку";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow">
+                <div class="card-header bg-warning">
+                    <h3 class="mb-0">
+                        <i class="bi bi-pencil"></i> Редактировать посадку
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        <input type="hidden" asp-for="EditPlant.Id" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="EditPlant.Name" class="form-label">
+                                <strong>Название растения <span class="text-danger">*</span></strong>
+                            </label>
+                            <input asp-for="EditPlant.Name" class="form-control" />
+                            <span asp-validation-for="EditPlant.Name" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EditPlant.Variety" class="form-label">
+                                <strong>Сорт</strong>
+                            </label>
+                            <input asp-for="EditPlant.Variety" class="form-control" />
+                            <span asp-validation-for="EditPlant.Variety" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EditPlant.Type" class="form-label">
+                                    <strong>Тип растения <span class="text-danger">*</span></strong>
+                                </label>
+                                <select asp-for="EditPlant.Type" asp-items="Model.PlantTypes" class="form-select">
+                                </select>
+                                <span asp-validation-for="EditPlant.Type" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="EditPlant.GardenBedId" class="form-label">
+                                    <strong>Грядка <span class="text-danger">*</span></strong>
+                                </label>
+                                <select asp-for="EditPlant.GardenBedId" asp-items="Model.GardenBeds" class="form-select">
+                                </select>
+                                <span asp-validation-for="EditPlant.GardenBedId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EditPlant.PlantingDate" class="form-label">
+                                <strong>Дата посадки <span class="text-danger">*</span></strong>
+                            </label>
+                            <input asp-for="EditPlant.PlantingDate" type="date" class="form-control" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                            <span asp-validation-for="EditPlant.PlantingDate" class="text-danger"></span>
+                            <small class="text-muted">Дата посадки не может быть в будущем</small>
+                        </div>
+
+                        <div class="card mb-3">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">Тип посадки</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-check form-switch mb-3">
+                                    <input asp-for="EditPlant.IsUnique" class="form-check-input" type="checkbox" id="isUniqueSwitch">
+                                    <label class="form-check-label" for="isUniqueSwitch">
+                                        <strong>Уникальное растение</strong>
+                                        <br/>
+                                        <small class="text-muted">
+                                            Включите для уникальных растений (розы, деревья и т.д.). 
+                                            Выключите для групповых посадок (помидоры, огурцы и т.д.)
+                                        </small>
+                                    </label>
+                                </div>
+
+                                <div id="quantityBlock">
+                                    <label asp-for="EditPlant.Quantity" class="form-label">
+                                        <strong>Количество растений</strong>
+                                    </label>
+                                    <input asp-for="EditPlant.Quantity" type="number" min="1" class="form-control" />
+                                    <span asp-validation-for="EditPlant.Quantity" class="text-danger"></span>
+                                    <small class="text-muted">Укажите количество растений для групповой посадки</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="EditPlant.Description" class="form-label">
+                                <strong>Описание / Заметки</strong>
+                            </label>
+                            <textarea asp-for="EditPlant.Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="EditPlant.Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-page="/Plants/Details" asp-route-id="@Model.EditPlant.Id" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Отмена
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Сохранить изменения
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Toggle quantity field based on IsUnique checkbox
+        document.getElementById('isUniqueSwitch').addEventListener('change', function() {
+            const quantityBlock = document.getElementById('quantityBlock');
+            const quantityInput = document.querySelector('input[name="EditPlant.Quantity"]');
+            
+            if (this.checked) {
+                quantityBlock.style.display = 'none';
+                quantityInput.value = '1';
+            } else {
+                quantityBlock.style.display = 'block';
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const isUnique = document.getElementById('isUniqueSwitch').checked;
+            const quantityBlock = document.getElementById('quantityBlock');
+            
+            if (isUnique) {
+                quantityBlock.style.display = 'none';
+            }
+        });
+    </script>
+}
+
+
