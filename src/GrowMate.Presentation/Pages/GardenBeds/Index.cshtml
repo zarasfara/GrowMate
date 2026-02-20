@@ -1,5 +1,6 @@
 ﻿@page
-@model GardenBedsModel
+@using GrowMate.Domain.GardenBeds
+@model IndexModel
 @{
     ViewData["Title"] = "Мои грядки";
 }
@@ -8,7 +9,8 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h2">🌱 Мои грядки</h1>
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#createGardenBedModal">
+        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+                data-bs-target="#createGardenBedModal">
             <i class="bi bi-plus-circle"></i> Добавить грядку
         </button>
     </div>
@@ -26,7 +28,7 @@
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-circle"></i> @Model.ErrorMessage
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert">Удалить</button>
         </div>
     }
 
@@ -43,13 +45,13 @@
                                 <span>
                                     @switch (gardenBed.Type)
                                     {
-                                        case GrowMate.Domain.GardenBeds.GardenBedType.OpenGround:
+                                        case GardenBedType.OpenGround:
                                             <span>🌾</span>
                                             break;
-                                        case GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse:
+                                        case GardenBedType.Greenhouse:
                                             <span>🏠</span>
                                             break;
-                                        case GrowMate.Domain.GardenBeds.GardenBedType.Container:
+                                        case GardenBedType.Container:
                                             <span>🪴</span>
                                             break;
                                         default:
@@ -69,17 +71,17 @@
                             </p>
                         </div>
                         <div class="card-footer bg-light d-flex gap-2">
-                            <a href="/GardenBedDetails?id=@gardenBed.Id" class="btn btn-sm btn-primary flex-grow-1">
+                            <a asp-page="Details" asp-route-id="@gardenBed.Id" class="btn btn-sm btn-primary flex-grow-1">
                                 <i class="bi bi-eye"></i> Просмотр
                             </a>
-                            <a href="/EditGardenBed?id=@gardenBed.Id" class="btn btn-sm btn-warning">
+                            <a asp-page="Edit" asp-route-id="@gardenBed.Id" class="btn btn-sm btn-warning">
                                 <i class="bi bi-pencil"></i> Изменить
                             </a>
                             <form method="post" asp-page-handler="Delete" style="display:inline;">
-                                <input type="hidden" name="id" value="@gardenBed.Id" />
-                                <button type="submit" class="btn btn-sm btn-danger" 
+                                <input type="hidden" name="id" value="@gardenBed.Id"/>
+                                <button type="submit" class="btn btn-sm btn-danger"
                                         onclick="return confirm('Вы уверены? Это удалит грядку и всех растений на ней.');">
-                                    <i class="bi bi-trash"></i>
+                                    <i class="bi bi-trash"></i> Удалить
                                 </button>
                             </form>
                         </div>
@@ -112,7 +114,7 @@
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="gardenBedName" class="form-label">Название грядки</label>
-                        <input type="text" class="form-control" id="gardenBedName" 
+                        <input type="text" class="form-control" id="gardenBedName"
                                asp-for="NewGardenBed.Name" placeholder="Например: Помидоры" required>
                         <span asp-validation-for="NewGardenBed.Name" class="text-danger"></span>
                     </div>
@@ -139,17 +141,21 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
 }
 
 @{
-    string GetGardenBedTypeName(GrowMate.Domain.GardenBeds.GardenBedType type) => type switch
+    string GetGardenBedTypeName(GardenBedType type)
     {
-        GrowMate.Domain.GardenBeds.GardenBedType.OpenGround => "Открытый грунт",
-        GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse => "Теплица",
-        GrowMate.Domain.GardenBeds.GardenBedType.Container => "Контейнер",
-        GrowMate.Domain.GardenBeds.GardenBedType.Other => "Другое",
-        _ => "Неизвестно"
-    };
+        return type switch
+        {
+            GardenBedType.OpenGround => "Открытый грунт",
+            GardenBedType.Greenhouse => "Теплица",
+            GardenBedType.Container => "Контейнер",
+            GardenBedType.Other => "Другое",
+            _ => "Неизвестно"
+        };
+    }
 }
+
 

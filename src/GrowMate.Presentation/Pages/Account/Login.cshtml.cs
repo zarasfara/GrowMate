@@ -17,20 +17,15 @@ public class LoginModel : PageModel
         _signInManager = signInManager;
     }
 
-    [BindProperty]
-    public LoginViewModel Input { get; set; } = new();
+    [BindProperty] public LoginViewModel Input { get; set; } = new();
 
     public string? ReturnUrl { get; set; }
 
-    [TempData]
-    public string? ErrorMessage { get; set; }
+    [TempData] public string? ErrorMessage { get; set; }
 
     public void OnGet(string? returnUrl = null)
     {
-        if (!string.IsNullOrEmpty(ErrorMessage))
-        {
-            ModelState.AddModelError(string.Empty, ErrorMessage);
-        }
+        if (!string.IsNullOrEmpty(ErrorMessage)) ModelState.AddModelError(string.Empty, ErrorMessage);
 
         ReturnUrl = returnUrl;
     }
@@ -39,17 +34,11 @@ public class LoginModel : PageModel
     {
         ReturnUrl = returnUrl;
 
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
+        if (!ModelState.IsValid) return Page();
 
-        var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
+        var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, true);
 
-        if (result.Succeeded)
-        {
-            return LocalRedirect(ReturnUrl ?? "/");
-        }
+        if (result.Succeeded) return LocalRedirect(ReturnUrl ?? "/");
 
         if (result.IsLockedOut)
         {
@@ -61,4 +50,3 @@ public class LoginModel : PageModel
         return Page();
     }
 }
-

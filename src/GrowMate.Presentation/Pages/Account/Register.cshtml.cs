@@ -19,8 +19,7 @@ public class RegisterModel : PageModel
         _signInManager = signInManager;
     }
 
-    [BindProperty]
-    public RegisterViewModel Input { get; set; } = new();
+    [BindProperty] public RegisterViewModel Input { get; set; } = new();
 
     public string? ReturnUrl { get; set; }
 
@@ -33,10 +32,7 @@ public class RegisterModel : PageModel
     {
         ReturnUrl = returnUrl;
 
-        if (!ModelState.IsValid)
-        {
-            return Page();
-        }
+        if (!ModelState.IsValid) return Page();
 
         var user = new User
         {
@@ -50,16 +46,12 @@ public class RegisterModel : PageModel
 
         if (result.Succeeded)
         {
-            await _signInManager.SignInAsync(user, isPersistent: false);
+            await _signInManager.SignInAsync(user, false);
             return LocalRedirect(ReturnUrl ?? "/");
         }
 
-        foreach (var error in result.Errors)
-        {
-            ModelState.AddModelError(string.Empty, error.Description);
-        }
+        foreach (var error in result.Errors) ModelState.AddModelError(string.Empty, error.Description);
 
         return Page();
     }
 }
-

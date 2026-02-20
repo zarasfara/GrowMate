@@ -1,5 +1,6 @@
-﻿@page
-@model GardenBedDetailsModel
+﻿@page "{id:int}"
+@using GrowMate.Domain.GardenBeds
+@model DetailsModel
 @{
     ViewData["Title"] = Model.GardenBed?.Name ?? "Детали грядки";
 }
@@ -15,13 +16,13 @@
                             <span>
                                 @switch (Model.GardenBed.Type)
                                 {
-                                    case GrowMate.Domain.GardenBeds.GardenBedType.OpenGround:
+                                    case GardenBedType.OpenGround:
                                         <span>🌾</span>
                                         break;
-                                    case GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse:
+                                    case GardenBedType.Greenhouse:
                                         <span>🏠</span>
                                         break;
-                                    case GrowMate.Domain.GardenBeds.GardenBedType.Container:
+                                    case GardenBedType.Container:
                                         <span>🪴</span>
                                         break;
                                     default:
@@ -39,7 +40,8 @@
                                 <dl class="row">
                                     <dt class="col-sm-6">Тип:</dt>
                                     <dd class="col-sm-6">
-                                        <span class="badge bg-primary">@GetGardenBedTypeName(Model.GardenBed.Type)</span>
+                                        <span
+                                            class="badge bg-primary">@GetGardenBedTypeName(Model.GardenBed.Type)</span>
                                     </dd>
                                     <dt class="col-sm-6">Растений:</dt>
                                     <dd class="col-sm-6">
@@ -52,10 +54,10 @@
                         </div>
                     </div>
                     <div class="card-footer bg-light">
-                        <a href="/EditGardenBed?id=@Model.GardenBed.Id" class="btn btn-warning">
+                        <a asp-page="Edit" asp-route-id="@Model.GardenBed.Id" class="btn btn-warning">
                             <i class="bi bi-pencil"></i> Изменить
                         </a>
-                        <a href="/GardenBeds" class="btn btn-secondary">
+                        <a asp-page="Index" class="btn btn-secondary">
                             <i class="bi bi-arrow-left"></i> Вернуться
                         </a>
                     </div>
@@ -91,13 +93,16 @@
 </div>
 
 @{
-    string GetGardenBedTypeName(GrowMate.Domain.GardenBeds.GardenBedType type) => type switch
+    string GetGardenBedTypeName(GardenBedType type)
     {
-        GrowMate.Domain.GardenBeds.GardenBedType.OpenGround => "Открытый грунт",
-        GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse => "Теплица",
-        GrowMate.Domain.GardenBeds.GardenBedType.Container => "Контейнер",
-        GrowMate.Domain.GardenBeds.GardenBedType.Other => "Другое",
-        _ => "Неизвестно"
-    };
+        return type switch
+        {
+            GardenBedType.OpenGround => "Открытый грунт",
+            GardenBedType.Greenhouse => "Теплица",
+            GardenBedType.Container => "Контейнер",
+            GardenBedType.Other => "Другое",
+            _ => "Неизвестно"
+        };
+    }
 }
 

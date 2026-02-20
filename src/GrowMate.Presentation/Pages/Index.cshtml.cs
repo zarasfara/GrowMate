@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using GrowMate.Domain.GardenBeds;
 using GrowMate.Domain.GardenTasks;
 using GrowMate.Domain.Plants;
@@ -37,15 +36,16 @@ public class IndexModel : PageModel
     // Дополнительная статистика
     public int OverdueTasks => UpcomingTasks.Count(t => !t.IsCompleted && t.DueDate.Date < DateTime.Today);
     public int TasksToday => UpcomingTasks.Count(t => t.DueDate.Date == DateTime.Today);
-    public int PlantsByType(PlantType type) => RecentPlants.Count(p => p.Type == type);
+
+    public int PlantsByType(PlantType type)
+    {
+        return RecentPlants.Count(p => p.Type == type);
+    }
 
     public async Task OnGetAsync()
     {
         var user = await _userManager.GetUserAsync(User);
-        if (user != null)
-        {
-            await LoadDataFromDatabaseAsync(user.Id);
-        }
+        if (user != null) await LoadDataFromDatabaseAsync(user.Id);
     }
 
     private async Task LoadDataFromDatabaseAsync(string userId)
@@ -78,4 +78,3 @@ public class IndexModel : PageModel
         }
     }
 }
-

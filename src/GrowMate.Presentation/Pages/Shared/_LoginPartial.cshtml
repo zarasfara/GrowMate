@@ -1,5 +1,5 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using GrowMate.Domain.Users
+﻿@using GrowMate.Domain.Users
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
@@ -7,7 +7,7 @@
 {
     var currentUser = await UserManager.GetUserAsync(User);
     var displayName = !string.IsNullOrEmpty(currentUser?.FullName) ? currentUser.FullName : currentUser?.Email ?? "Пользователь";
-    
+
     <li class="nav-item">
         <span class="nav-link text-dark">Привет, @displayName!</span>
     </li>

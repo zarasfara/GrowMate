@@ -1,4 +1,7 @@
 ﻿@page
+@using GrowMate.Domain.GardenBeds
+@using GrowMate.Domain.GardenTasks
+@using GrowMate.Domain.Plants
 @model IndexModel
 @{
     ViewData["Title"] = "Мой сад";
@@ -10,12 +13,14 @@
         <div class="row align-items-center">
             <div class="col-lg-8">
                 <h1 class="display-4 fw-bold mb-3 hero-title">🌱 Добро пожаловать в GrowMate!</h1>
-                <p class="lead mb-4 hero-subtitle">Ваш умный помощник в управлении садом. Отслеживайте растения, планируйте задачи и выращивайте больше!</p>
+                <p class="lead mb-4 hero-subtitle">Ваш умный помощник в управлении садом. Отслеживайте растения,
+                    планируйте задачи и выращивайте больше!</p>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="/Plants" class="btn btn-light btn-lg px-4">
+                    <a asp-page="/GardenBeds/Index" class="btn btn-light btn-lg px-4">
                         <i class="bi bi-plus-circle"></i> Добавить растение
                     </a>
-                    <a href="/GardenTasks" class="btn btn-outline-light btn-lg px-4" style="color: white; border-color: white;">
+                    <a asp-page="/GardenTasks" class="btn btn-outline-light btn-lg px-4"
+                       style="color: white; border-color: white;">
                         <i class="bi bi-calendar-check"></i> Создать задачу
                     </a>
                 </div>
@@ -79,17 +84,20 @@
     <!-- Tabs Navigation -->
     <ul class="nav nav-pills nav-fill mb-4 shadow-sm rounded" id="mainTabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active rounded-start" id="beds-tab" data-bs-toggle="tab" data-bs-target="#beds" type="button" role="tab">
+            <button class="nav-link active rounded-start" id="beds-tab" data-bs-toggle="tab" data-bs-target="#beds"
+                    type="button" role="tab">
                 🌿 Мои грядки
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="plants-tab" data-bs-toggle="tab" data-bs-target="#plants" type="button" role="tab">
+            <button class="nav-link" id="plants-tab" data-bs-toggle="tab" data-bs-target="#plants" type="button"
+                    role="tab">
                 🪴 Растения
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link rounded-end" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab">
+            <button class="nav-link rounded-end" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks"
+                    type="button" role="tab">
                 📋 Задачи
             </button>
         </li>
@@ -102,7 +110,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="mb-0 fw-bold">🌿 Мои грядки</h5>
-                    <a href="/GardenBeds" class="btn btn-success btn-sm">
+                    <a asp-page="/GardenBeds/Index" class="btn btn-success btn-sm">
                         <i class="bi bi-plus-circle"></i> Добавить грядку
                     </a>
                 </div>
@@ -118,17 +126,17 @@
                                             <div class="d-flex justify-content-between align-items-start mb-3">
                                                 <h6 class="fw-bold mb-0">@bed.Name</h6>
                                                 <span class="badge rounded-pill @(bed.Type switch
-                                                {
-                                                    GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse => "bg-success",
-                                                    GrowMate.Domain.GardenBeds.GardenBedType.OpenGround => "bg-primary",
-                                                    GrowMate.Domain.GardenBeds.GardenBedType.Container => "bg-info",
-                                                    _ => "bg-secondary"
-                                                })">
+                                                                                {
+                                                                                    GardenBedType.Greenhouse => "bg-success",
+                                                                                    GardenBedType.OpenGround => "bg-primary",
+                                                                                    GardenBedType.Container => "bg-info",
+                                                                                    _ => "bg-secondary"
+                                                                                })">
                                                     @(bed.Type switch
                                                     {
-                                                        GrowMate.Domain.GardenBeds.GardenBedType.Greenhouse => "🏠 Теплица",
-                                                        GrowMate.Domain.GardenBeds.GardenBedType.OpenGround => "🌾 Открытый грунт",
-                                                        GrowMate.Domain.GardenBeds.GardenBedType.Container => "🪴 Контейнер",
+                                                        GardenBedType.Greenhouse => "🏠 Теплица",
+                                                        GardenBedType.OpenGround => "🌾 Открытый грунт",
+                                                        GardenBedType.Container => "🪴 Контейнер",
                                                         _ => "📦 Другое"
                                                     })
                                                 </span>
@@ -137,7 +145,8 @@
                                                 <i class="bi bi-geo-alt"></i> Грядка #@bed.Id
                                             </p>
                                             <div class="d-grid">
-                                                <a href="/GardenBedDetails?id=@bed.Id" class="btn btn-outline-primary btn-sm">
+                                                <a asp-page="/GardenBeds/Details" asp-route-id="@bed.Id"
+                                                   class="btn btn-outline-primary btn-sm">
                                                     Управление <i class="bi bi-arrow-right"></i>
                                                 </a>
                                             </div>
@@ -153,7 +162,7 @@
                             <div class="mb-3 opacity-50" style="font-size: 4rem;">🌱</div>
                             <h5 class="text-muted">У вас пока нет грядок</h5>
                             <p class="text-muted">Создайте свою первую грядку и начните выращивать!</p>
-                            <a href="/GardenBeds" class="btn btn-success">Создать грядку</a>
+                            <a asp-page="/GardenBeds/Index" class="btn btn-success">Создать грядку</a>
                         </div>
                     }
                 </div>
@@ -183,12 +192,12 @@
                                                     <span>
                                                         @(plant.Type switch
                                                         {
-                                                            GrowMate.Domain.Plants.PlantType.Vegetable => "🥕",
-                                                            GrowMate.Domain.Plants.PlantType.Fruit => "🍎",
-                                                            GrowMate.Domain.Plants.PlantType.Berry => "🍓",
-                                                            GrowMate.Domain.Plants.PlantType.Flower => "🌸",
-                                                            GrowMate.Domain.Plants.PlantType.Tree => "🌳",
-                                                            GrowMate.Domain.Plants.PlantType.Herb => "🌿",
+                                                            PlantType.Vegetable => "🥕",
+                                                            PlantType.Fruit => "🍎",
+                                                            PlantType.Berry => "🍓",
+                                                            PlantType.Flower => "🌸",
+                                                            PlantType.Tree => "🌳",
+                                                            PlantType.Herb => "🌿",
                                                             _ => "🌱"
                                                         })
                                                     </span>
@@ -199,7 +208,8 @@
                                             {
                                                 <p class="text-center text-muted small mb-2">@plant.Variety</p>
                                             }
-                                            <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                                            <div
+                                                class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
                                                 <small class="text-muted">
                                                     <i class="bi bi-calendar3"></i> @((DateTime.Now - plant.PlantingDate).Days) дн.
                                                 </small>
@@ -243,12 +253,13 @@
                             {
                                 var isOverdue = task.DueDate.Date < DateTime.Today && !task.IsCompleted;
                                 var isToday = task.DueDate.Date == DateTime.Today;
-                                
+
                                 <div class="list-group-item @(task.IsCompleted ? "bg-light" : "")">
                                     <div class="row align-items-center">
                                         <div class="col-auto">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" @(task.IsCompleted ? "checked" : "") disabled>
+                                                <input class="form-check-input" type="checkbox"
+                                                       @(task.IsCompleted ? "checked" : "") disabled>
                                             </div>
                                         </div>
                                         <div class="col">
@@ -259,22 +270,23 @@
                                                     </h6>
                                                     <div class="d-flex gap-2 flex-wrap">
                                                         <span class="badge @(task.Type switch
-                                                        {
-                                                            GrowMate.Domain.GardenTasks.TaskType.Watering => "bg-primary",
-                                                            GrowMate.Domain.GardenTasks.TaskType.Fertilizing => "bg-success",
-                                                            GrowMate.Domain.GardenTasks.TaskType.Treatment => "bg-danger",
-                                                            _ => "bg-secondary"
-                                                        })">
+                                                                           {
+                                                                               TaskType.Watering => "bg-primary",
+                                                                               TaskType.Fertilizing => "bg-success",
+                                                                               TaskType.Treatment => "bg-danger",
+                                                                               _ => "bg-secondary"
+                                                                           })">
                                                             @(task.Type switch
                                                             {
-                                                                GrowMate.Domain.GardenTasks.TaskType.Watering => "💧 Полив",
-                                                                GrowMate.Domain.GardenTasks.TaskType.Fertilizing => "🌾 Подкормка",
-                                                                GrowMate.Domain.GardenTasks.TaskType.Treatment => "🛡️ Обработка",
+                                                                TaskType.Watering => "💧 Полив",
+                                                                TaskType.Fertilizing => "🌾 Подкормка",
+                                                                TaskType.Treatment => "🛡️ Обработка",
                                                                 _ => "📝 Другое"
                                                             })
                                                         </span>
-                                                        <span class="badge @(isOverdue ? "bg-danger" : isToday ? "bg-warning" : "bg-secondary")">
-                                                            <i class="bi bi-calendar"></i> 
+                                                        <span
+                                                            class="badge @(isOverdue ? "bg-danger" : isToday ? "bg-warning" : "bg-secondary")">
+                                                            <i class="bi bi-calendar"></i>
                                                             @if (isOverdue)
                                                             {
                                                                 <text>Просрочено!</text>
@@ -322,7 +334,7 @@
                     <div class="quick-action-icon">📊</div>
                     <h5 class="fw-bold">Статистика</h5>
                     <p class="text-muted">Просматривайте детальную статистику роста ваших растений</p>
-                    <a href="/GardenBeds" class="btn btn-outline-primary">Перейти</a>
+                    <a asp-page="/GardenBeds/Index" class="btn btn-outline-primary">Перейти</a>
                 </div>
             </div>
         </div>
@@ -332,7 +344,7 @@
                     <div class="quick-action-icon">📅</div>
                     <h5 class="fw-bold">Календарь</h5>
                     <p class="text-muted">Планируйте посадки и задачи в удобном календаре</p>
-                    <a href="/GardenTasks" class="btn btn-outline-primary">Перейти</a>
+                    <a asp-page="/GardenTasks" class="btn btn-outline-primary">Перейти</a>
                 </div>
             </div>
         </div>
@@ -342,7 +354,7 @@
                     <div class="quick-action-icon">📚</div>
                     <h5 class="fw-bold">База знаний</h5>
                     <p class="text-muted">Изучайте советы и рекомендации по выращиванию</p>
-                    <a href="/GardenBeds" class="btn btn-outline-primary">Перейти</a>
+                    <a asp-page="/GardenBeds/Index" class="btn btn-outline-primary">Перейти</a>
                 </div>
             </div>
         </div>

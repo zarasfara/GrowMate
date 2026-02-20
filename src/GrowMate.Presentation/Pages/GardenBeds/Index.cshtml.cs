@@ -1,29 +1,27 @@
-﻿using GrowMate.Domain.Users;
-using GrowMate.Presentation.Models;
-using GrowMate.Presentation.Services;
+﻿using GrowMate.Application.Services;
+using GrowMate.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace GrowMate.Presentation.Pages;
+namespace GrowMate.Presentation.Pages.GardenBeds;
 
-public class GardenBedsModel : PageModel
+public class IndexModel : PageModel
 {
     private readonly GardenBedService _gardenBedService;
     private readonly UserManager<User> _userManager;
 
-    [BindProperty]
-    public CreateGardenBedDto NewGardenBed { get; set; } = new();
-
-    public List<GardenBedDto> GardenBeds { get; set; } = [];
-    public string? ErrorMessage { get; set; }
-    public string? SuccessMessage { get; set; }
-
-    public GardenBedsModel(GardenBedService gardenBedService, UserManager<User> userManager)
+    public IndexModel(GardenBedService gardenBedService, UserManager<User> userManager)
     {
         _gardenBedService = gardenBedService;
         _userManager = userManager;
     }
+
+    [BindProperty] public CreateGardenBedDto NewGardenBed { get; set; } = new();
+
+    public List<GardenBedDto> GardenBeds { get; set; } = [];
+    public string? ErrorMessage { get; set; }
+    public string? SuccessMessage { get; set; }
 
     public async Task<IActionResult> OnGetAsync()
     {
@@ -77,16 +75,11 @@ public class GardenBedsModel : PageModel
 
         var success = await _gardenBedService.DeleteGardenBedAsync(id, user.Id);
         if (success)
-        {
             SuccessMessage = "Грядка успешно удалена!";
-        }
         else
-        {
             ErrorMessage = "Не удалось удалить грядку.";
-        }
 
         return RedirectToPage();
     }
 }
-
 

@@ -6,4 +6,9 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\GrowMate.Domain\GrowMate.Domain.csproj"/>
+        <ProjectReference Include="..\GrowMate.Infrastructure\GrowMate.Infrastructure.csproj"/>
+    </ItemGroup>
+
 </Project>

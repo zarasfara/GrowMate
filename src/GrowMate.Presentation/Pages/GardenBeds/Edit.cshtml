@@ -1,5 +1,5 @@
 ﻿@page "{id:int}"
-@model EditGardenBedModel
+@model EditModel
 @{
     ViewData["Title"] = "Изменить грядку";
 }
@@ -23,7 +23,7 @@
                     <form method="post">
                         <div class="mb-3">
                             <label for="gardenBedName" class="form-label">Название грядки</label>
-                            <input type="text" class="form-control" id="gardenBedName" 
+                            <input type="text" class="form-control" id="gardenBedName"
                                    asp-for="EditGardenBed.Name" required>
                             <span asp-validation-for="EditGardenBed.Name" class="text-danger"></span>
                         </div>
@@ -43,7 +43,7 @@
                             <button type="submit" class="btn btn-success flex-grow-1">
                                 <i class="bi bi-check-lg"></i> Сохранить
                             </button>
-                            <a href="/GardenBeds" class="btn btn-secondary flex-grow-1">
+                            <a asp-page="Index" class="btn btn-secondary flex-grow-1">
                                 <i class="bi bi-arrow-left"></i> Отмена
                             </a>
                         </div>
@@ -55,6 +55,6 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
 }
 

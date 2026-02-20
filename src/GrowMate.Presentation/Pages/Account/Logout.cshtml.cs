@@ -17,13 +17,9 @@ public class LogoutModel : PageModel
     public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
     {
         await _signInManager.SignOutAsync();
-        
-        if (returnUrl != null)
-        {
-            return LocalRedirect(returnUrl);
-        }
-        
+
+        if (returnUrl != null) return LocalRedirect(returnUrl);
+
         return RedirectToPage("/Index");
     }
 }
-
