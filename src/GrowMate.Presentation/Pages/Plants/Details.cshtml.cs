@@ -1,5 +1,8 @@
 ﻿using GrowMate.Applicatoin.DTOs;
 using GrowMate.Applicatoin.Services;
+using GrowMate.Domain.GardenTasks;
+using GrowMate.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,15 +16,19 @@ public class DetailsModel : PageModel
     private readonly PlantService _plantService;
     private readonly ILogger<DetailsModel> _logger;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly ApplicationContext _context;
 
-    public DetailsModel(PlantService plantService, ILogger<DetailsModel> logger, IWebHostEnvironment webHostEnvironment)
+    public DetailsModel(PlantService plantService, ILogger<DetailsModel> logger, IWebHostEnvironment webHostEnvironment, ApplicationContext context)
     {
         _plantService = plantService;
         _logger = logger;
         _webHostEnvironment = webHostEnvironment;
+        _context = context;
     }
 
     public PlantDto Plant { get; set; } = null!;
+
+    public List<GardenTask> Tasks { get; set; } = new();
 
     public async Task<IActionResult> OnGetAsync(int id)
     {
@@ -40,6 +47,13 @@ public class DetailsModel : PageModel
         }
 
         Plant = plant;
+
+        // Load tasks for this plant (ordered: incomplete first, then by due date)
+        Tasks = await _context.GardenTasks
+            .Where(t => t.PlantId == id)
+            .OrderBy(t => t.IsCompleted)
+            .ThenBy(t => t.DueDate)
+            .ToListAsync();
         return Page();
     }
 

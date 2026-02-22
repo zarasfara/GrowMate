@@ -1,0 +1,39 @@
+@page
+@model GrowMate.Presentation.Pages.GardenCare.IndexModel
+@{
+    ViewData["Title"] = "Задачи по уходу";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3">Задачи по уходу</h1>
+        <a asp-page="/GardenCare/Create" class="btn btn-success">Создать задачу</a>
+    </div>
+
+    @if (!Model.Tasks.Any())
+    {
+        <div class="alert alert-info">Нет задач. Создайте первую задачу.</div>
+    }
+
+    <div class="list-group">
+        @foreach (var t in Model.Tasks)
+        {
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">@t.Title</div>
+                    <div class="small text-muted">@t.Type — @t.Plant?.Name</div>
+                    <div class="small">Срок: @t.DueDate.ToString("dd.MM.yyyy")</div>
+                </div>
+                <div class="btn-group" role="group">
+                    <form method="post" asp-page-handler="ToggleComplete" asp-route-id="@t.Id" class="d-inline me-1">
+                        <button type="submit" class="btn btn-sm @(t.IsCompleted ? "btn-success" : "btn-outline-secondary")">@(t.IsCompleted ? "Выполнено" : "Отметить")</button>
+                    </form>
+                    <a asp-page="/GardenCare/Edit" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">Изменить</a>
+                    <form method="post" asp-page-handler="Delete" asp-route-id="@t.Id" class="d-inline ms-1">
+                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Удалить задачу?')">Удалить</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>

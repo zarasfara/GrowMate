@@ -1,0 +1,22 @@
+@page
+@model GrowMate.Presentation.Pages.GardenCare.DetailsModel
+@{
+    ViewData["Title"] = "Детали задачи";
+}
+
+<div class="container mt-4">
+    <h1 class="h3">@Model.Task?.Title</h1>
+
+    <div class="card mt-3">
+        <div class="card-body">
+            <p><strong>Тип:</strong> @Model.Task?.Type</p>
+            <p><strong>Растение:</strong> @Model.Task?.Plant?.Name</p>
+            <p><strong>Срок:</strong> @Model.Task?.DueDate.ToString("dd.MM.yyyy")</p>
+            <p><strong>Статус:</strong> @(Model.Task?.IsCompleted == true ? "Выполнено" : "Ожидает")</p>
+        </div>
+        <div class="card-footer">
+            <a asp-page="/GardenCare/Index" class="btn btn-link">Назад</a>
+            <a asp-page="/GardenCare/Edit" asp-route-id="@Model.Task?.Id" class="btn btn-primary">Изменить</a>
+        </div>
+    </div>
+</div>

@@ -174,7 +174,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="mb-0 fw-bold">🪴 Мои растения</h5>
-                    <a href="/Plants" class="btn btn-primary btn-sm">
+                    <a asp-page="/Plants/Index" class="btn btn-primary btn-sm">
                         <i class="bi bi-plus-circle"></i> Добавить растение
                     </a>
                 </div>
@@ -229,7 +229,7 @@
                             <div class="mb-3 opacity-50" style="font-size: 4rem;">🪴</div>
                             <h5 class="text-muted">У вас пока нет растений</h5>
                             <p class="text-muted">Добавьте первое растение и следите за его ростом!</p>
-                            <a href="/Plants" class="btn btn-primary">Добавить растение</a>
+                            <a asp-page="/Plants/Index" class="btn btn-primary">Добавить растение</a>
                         </div>
                     }
                 </div>
@@ -241,7 +241,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center py-3">
                     <h5 class="mb-0 fw-bold">📋 Предстоящие задачи</h5>
-                    <a href="/GardenTasks" class="btn btn-warning btn-sm">
+                    <a asp-page="/GardenTasks" class="btn btn-warning btn-sm">
                         <i class="bi bi-plus-circle"></i> Создать задачу
                     </a>
                 </div>
@@ -318,7 +318,7 @@
                             <div class="mb-3 opacity-50" style="font-size: 4rem;">📋</div>
                             <h5 class="text-muted">Нет предстоящих задач</h5>
                             <p class="text-muted">Создайте задачу, чтобы не забыть важные дела!</p>
-                            <a href="/GardenTasks" class="btn btn-warning">Создать задачу</a>
+                            <a asp-page="/GardenTasks" class="btn btn-warning">Создать задачу</a>
                         </div>
                     }
                 </div>

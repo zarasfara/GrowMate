@@ -1,0 +1,46 @@
+@page
+@model GrowMate.Presentation.Pages.GardenCare.CreateModel
+@{
+    ViewData["Title"] = "Создать задачу";
+}
+
+<div class="container mt-4">
+    <h1 class="h3 mb-3">Создать задачу по уходу</h1>
+
+    <form method="post">
+        <div class="mb-3">
+            <label class="form-label">Заголовок</label>
+            <input asp-for="Task.Title" class="form-control" />
+            <span asp-validation-for="Task.Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Тип</label>
+            <select asp-for="Task.Type" class="form-select">
+                <option value="Watering">Полив</option>
+                <option value="Fertilizing">Подкормка</option>
+                <option value="Treatment">Обработка</option>
+                <option value="Other">Другое</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Растение</label>
+            <select asp-for="Task.PlantId" class="form-select">
+                <option value="">-- Выберите растение --</option>
+                @foreach (var p in Model.Plants)
+                {
+                    <option value="@p.Id" selected="@(p.Id == Model.Task.PlantId ? "selected" : "")">@p.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Срок (дата)</label>
+            <input asp-for="Task.DueDate" type="date" class="form-control" />
+        </div>
+
+        <button class="btn btn-primary">Создать</button>
+        <a asp-page="/GardenCare/Index" class="btn btn-link">Отмена</a>
+    </form>
+</div>

@@ -1,0 +1,53 @@
+@page
+@model GrowMate.Presentation.Pages.GardenCare.EditModel
+@{
+    ViewData["Title"] = "Редактировать задачу";
+}
+
+<div class="container mt-4">
+    <h1 class="h3 mb-3">Редактировать задачу</h1>
+
+    <form method="post">
+        <input type="hidden" asp-for="Task.Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Заголовок</label>
+            <input asp-for="Task.Title" class="form-control" />
+            <span asp-validation-for="Task.Title" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Тип</label>
+            <select asp-for="Task.Type" class="form-select">
+                <option value="Watering">Полив</option>
+                <option value="Fertilizing">Подкормка</option>
+                <option value="Treatment">Обработка</option>
+                <option value="Other">Другое</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Растение</label>
+            <select asp-for="Task.PlantId" class="form-select">
+                <option value="">-- Выберите растение --</option>
+                @foreach (var p in Model.Plants)
+                {
+                    <option value="@p.Id" selected="@(p.Id == Model.Task.PlantId ? "selected" : null)">@p.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Срок (дата)</label>
+            <input asp-for="Task.DueDate" type="date" class="form-control" />
+        </div>
+
+        <div class="form-check mb-3">
+            <input asp-for="Task.IsCompleted" class="form-check-input" />
+            <label class="form-check-label">Выполнено</label>
+        </div>
+
+        <button class="btn btn-primary">Сохранить</button>
+        <a asp-page="/GardenCare/Index" class="btn btn-link">Отмена</a>
+    </form>
+</div>

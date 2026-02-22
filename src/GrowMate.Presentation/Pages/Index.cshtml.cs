@@ -63,10 +63,18 @@ public class IndexModel : PageModel
                 .Take(12)
                 .ToListAsync();
 
+            // Show upcoming tasks from today onwards (next 30 days by default)
+            var start = DateTime.Today;
+            var end = DateTime.Today.AddDays(30);
+
             UpcomingTasks = await _context.GardenTasks
                 .Include(t => t.Plant)
-                .Where(t => t.Plant != null && t.Plant.UserId == userId && t.DueDate >= DateTime.Today.AddDays(-7))
-                .OrderBy(t => t.DueDate)
+                .Where(t => t.Plant != null
+                            && t.Plant.UserId == userId
+                            && t.DueDate >= start
+                            && t.DueDate <= end)
+                .OrderBy(t => t.IsCompleted) // incomplete first
+                .ThenBy(t => t.DueDate)
                 .ToListAsync();
         }
         catch
