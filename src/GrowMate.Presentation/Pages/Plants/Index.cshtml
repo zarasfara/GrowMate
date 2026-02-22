@@ -53,8 +53,8 @@
             @foreach (var plant in Model.Plants)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <div class="card h-100 shadow-sm plant-card hover-lift">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="mb-0">
                                 @if (plant.IsUnique)
                                 {
@@ -66,7 +66,7 @@
                                 }
                                 @plant.Name
                             </h5>
-                            <span class="badge bg-light text-dark">@plant.Type.ToString()</span>
+                            <span class="badge-type">@plant.Type.ToString()</span>
                         </div>
                         <div class="card-body">
                             @if (!string.IsNullOrWhiteSpace(plant.ImagePath))
@@ -121,17 +121,17 @@
                             }
                         </div>
                         <div class="card-footer bg-light">
-                            <div class="btn-group w-100" role="group">
-                                <a asp-page="/Plants/Details" asp-route-id="@plant.Id" class="btn btn-outline-primary">
-                                    <i class="bi bi-eye"></i> Детали
+                            <div class="btn-group w-100 d-flex" role="group">
+                                <a asp-page="/Plants/Details" asp-route-id="@plant.Id" class="btn btn-primary btn-sm action-btn">
+                                    <i class="bi bi-eye me-1"></i> Детали
                                 </a>
-                                <a asp-page="/Plants/Edit" asp-route-id="@plant.Id" class="btn btn-outline-warning">
-                                    <i class="bi bi-pencil">Изменить</i>
+                                <a asp-page="/Plants/Edit" asp-route-id="@plant.Id" class="btn btn-warning btn-sm action-btn">
+                                    <i class="bi bi-pencil me-1"></i> Изменить
                                 </a>
-                                <form method="post" asp-page-handler="Delete" asp-route-id="@plant.Id" class="d-inline">
-                                    <button type="submit" class="btn btn-outline-danger" 
+                                <form method="post" asp-page-handler="Delete" asp-route-id="@plant.Id" class="d-inline w-100">
+                                    <button type="submit" class="btn btn-danger btn-sm action-btn w-100" 
                                             onclick="return confirm('Вы уверены, что хотите удалить эту посадку?')">
-                                        <i class="bi bi-trash">Удалить</i>
+                                        <i class="bi bi-trash me-1"></i> Удалить
                                     </button>
                                 </form>
                             </div>
