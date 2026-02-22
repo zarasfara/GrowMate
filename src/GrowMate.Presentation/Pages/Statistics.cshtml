@@ -1,0 +1,120 @@
+@page
+@model GrowMate.Presentation.Pages.StatisticsModel
+@{
+    ViewData["Title"] = "Статистика";
+}
+
+<div class="container py-4">
+    <h2 class="mb-4">📊 Статистика вашего сада</h2>
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h6 class="mb-1">Грядок</h6>
+                <div class="display-6 fw-bold">@Model.TotalGardenBeds</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h6 class="mb-1">Растений</h6>
+                <div class="display-6 fw-bold">@Model.TotalPlants</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h6 class="mb-1">Ожидающих задач</h6>
+                <div class="display-6 fw-bold">@Model.PendingTasks</div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-md-3">
+            <div class="card p-3 shadow-sm">
+                <h6 class="mb-1">Выполнено сегодня</h6>
+                <div class="display-6 fw-bold">@Model.CompletedTasksToday</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card p-3 shadow-sm">
+                <h5>Растения по типам</h5>
+                @if (Model.PlantsByType.Any())
+                {
+                    <table class="table table-sm mt-2">
+                        <thead><tr><th>Тип</th><th class="text-end">Количество</th></tr></thead>
+                        <tbody>
+                        @foreach (var kv in Model.PlantsByType)
+                        {
+                            <tr><td>@kv.Key</td><td class="text-end">@kv.Value</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">Нет данных по растениям.</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card p-3 shadow-sm">
+                <h5>Задачи по типам</h5>
+                @if (Model.TasksByType.Any())
+                {
+                    <table class="table table-sm mt-2">
+                        <thead><tr><th>Тип задачи</th><th class="text-end">Количество</th></tr></thead>
+                        <tbody>
+                        @foreach (var kv in Model.TasksByType)
+                        {
+                            <tr><td>@kv.Key</td><td class="text-end">@kv.Value</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">Нет данных по задачам.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-3">
+        <div class="col-lg-8">
+            <div class="card p-3 shadow-sm">
+                <h5>Растения с наибольшим количеством задач</h5>
+                @if (Model.TopPlants.Any())
+                {
+                    <table class="table table-sm mt-2">
+                        <thead><tr><th>Растение</th><th class="text-end">Задач</th></tr></thead>
+                        <tbody>
+                        @foreach (var t in Model.TopPlants)
+                        {
+                            <tr>
+                                <td>@t.Plant.Name (@t.Plant.Variety)</td>
+                                <td class="text-end">@t.TaskCount</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted">Нет данных.</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card p-3 shadow-sm">
+                <h5>Быстрые метрики</h5>
+                <ul class="list-unstyled mt-2">
+                    <li>Среднее число растений на грядку: <strong>@(Model.TotalGardenBeds == 0 ? 0 : (double)Model.TotalPlants / Model.TotalGardenBeds)</strong></li>
+                    <li>Активных типов растений: <strong>@Model.PlantsByType.Count</strong></li>
+                    <li>Типов задач: <strong>@Model.TasksByType.Count</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
