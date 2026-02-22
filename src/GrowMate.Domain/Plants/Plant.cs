@@ -13,6 +13,8 @@ public sealed class Plant
 
     public string? Description { get; set; }
 
+    public string? ImagePath { get; set; }
+
     public DateTime PlantingDate { get; set; } = DateTime.Now;
 
     public PlantType Type { get; set; }

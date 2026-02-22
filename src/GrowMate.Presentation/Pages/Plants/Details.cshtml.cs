@@ -12,11 +12,13 @@ public class DetailsModel : PageModel
 {
     private readonly PlantService _plantService;
     private readonly ILogger<DetailsModel> _logger;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public DetailsModel(PlantService plantService, ILogger<DetailsModel> logger)
+    public DetailsModel(PlantService plantService, ILogger<DetailsModel> logger, IWebHostEnvironment webHostEnvironment)
     {
         _plantService = plantService;
         _logger = logger;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     public PlantDto Plant { get; set; } = null!;
@@ -50,9 +52,13 @@ public class DetailsModel : PageModel
             return RedirectToPage("/Account/Login");
         }
 
+        var plant = await _plantService.GetPlantByIdAsync(id, userId);
+        var imagePath = plant?.ImagePath;
+
         var result = await _plantService.DeletePlantAsync(id, userId);
         if (result)
         {
+            DeleteImageIfExists(imagePath);
             TempData["SuccessMessage"] = "Посадка успешно удалена!";
         }
         else
@@ -61,6 +67,30 @@ public class DetailsModel : PageModel
         }
 
         return RedirectToPage("/Plants/Index");
+    }
+
+    private void DeleteImageIfExists(string? imagePath)
+    {
+        if (string.IsNullOrWhiteSpace(imagePath))
+        {
+            return;
+        }
+
+        var relativePath = imagePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+        var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+        if (!System.IO.File.Exists(fullPath))
+        {
+            return;
+        }
+
+        try
+        {
+            System.IO.File.Delete(fullPath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to delete image file {ImagePath}", fullPath);
+        }
     }
 }
 

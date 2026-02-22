@@ -3,6 +3,7 @@ using GrowMate.Applicatoin.Services;
 using GrowMate.Application.Services;
 using GrowMate.Domain.Plants;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -16,12 +17,18 @@ public class CreateModel : PageModel
     private readonly PlantService _plantService;
     private readonly GardenBedService _gardenBedService;
     private readonly ILogger<CreateModel> _logger;
+    private readonly IWebHostEnvironment _webHostEnvironment;
 
-    public CreateModel(PlantService plantService, GardenBedService gardenBedService, ILogger<CreateModel> logger)
+    public CreateModel(
+        PlantService plantService,
+        GardenBedService gardenBedService,
+        ILogger<CreateModel> logger,
+        IWebHostEnvironment webHostEnvironment)
     {
         _plantService = plantService;
         _gardenBedService = gardenBedService;
         _logger = logger;
+        _webHostEnvironment = webHostEnvironment;
     }
 
     [BindProperty]
@@ -36,6 +43,9 @@ public class CreateModel : PageModel
 
     public List<SelectListItem> GardenBeds { get; set; } = [];
     public List<SelectListItem> PlantTypes { get; set; } = [];
+
+    [BindProperty]
+    public IFormFile? PlantImage { get; set; }
 
     public async Task<IActionResult> OnGetAsync(int? gardenBedId)
     {
@@ -71,6 +81,11 @@ public class CreateModel : PageModel
             ModelState.AddModelError("NewPlant.PlantingDate", "Дата посадки не может быть в будущем");
         }
 
+        if (PlantImage is not null)
+        {
+            ValidateImage(PlantImage, nameof(PlantImage));
+        }
+
         if (!ModelState.IsValid)
         {
             await LoadSelectLists(userId);
@@ -79,6 +94,7 @@ public class CreateModel : PageModel
 
         try
         {
+            NewPlant.ImagePath = await SaveImageAsync(PlantImage);
             await _plantService.CreatePlantAsync(NewPlant, userId);
             TempData["SuccessMessage"] = "Посадка успешно создана!";
             return RedirectToPage("/Plants/Index");
@@ -120,6 +136,43 @@ public class CreateModel : PageModel
         PlantType.Other => "🌱 Другое",
         _ => type.ToString()
     };
+
+    private async Task<string?> SaveImageAsync(IFormFile? file)
+    {
+        if (file is null || file.Length == 0)
+        {
+            return null;
+        }
+
+        var uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", "plants");
+        Directory.CreateDirectory(uploadsFolder);
+
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+        var fileName = $"{Guid.NewGuid():N}{extension}";
+        var fullPath = Path.Combine(uploadsFolder, fileName);
+
+        await using var stream = System.IO.File.Create(fullPath);
+        await file.CopyToAsync(stream);
+
+        return $"/uploads/plants/{fileName}";
+    }
+
+    private void ValidateImage(IFormFile file, string key)
+    {
+        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
+        var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+        if (!allowedExtensions.Contains(extension))
+        {
+            ModelState.AddModelError(key, "Допустимые форматы: JPG, PNG, WEBP.");
+        }
+
+        const long maxSize = 5 * 1024 * 1024;
+        if (file.Length > maxSize)
+        {
+            ModelState.AddModelError(key, "Размер файла не должен превышать 5 MB.");
+        }
+    }
 }
 
 

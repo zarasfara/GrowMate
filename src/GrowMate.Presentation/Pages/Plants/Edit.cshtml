@@ -14,8 +14,9 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form method="post">
+                    <form method="post" enctype="multipart/form-data">
                         <input type="hidden" asp-for="EditPlant.Id" />
+                        <input type="hidden" asp-for="EditPlant.ImagePath" />
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
                         <div class="mb-3">
@@ -97,6 +98,25 @@
                             </label>
                             <textarea asp-for="EditPlant.Description" class="form-control" rows="3"></textarea>
                             <span asp-validation-for="EditPlant.Description" class="text-danger"></span>
+                        </div>
+
+                        @if (!string.IsNullOrWhiteSpace(Model.EditPlant.ImagePath))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Текущее фото</strong></label>
+                                <div>
+                                    <img src="@Model.EditPlant.ImagePath" alt="Фото посадки" class="img-fluid rounded border" style="max-height: 240px;" />
+                                </div>
+                            </div>
+                        }
+
+                        <div class="mb-3">
+                            <label asp-for="PlantImage" class="form-label">
+                                <strong>Новое фото посадки</strong>
+                            </label>
+                            <input asp-for="PlantImage" type="file" class="form-control" accept="image/png,image/jpeg,image/webp" />
+                            <span asp-validation-for="PlantImage" class="text-danger"></span>
+                            <small class="text-muted">Если выбрать новый файл, старое фото будет заменено.</small>
                         </div>
 
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end">

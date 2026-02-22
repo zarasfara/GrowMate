@@ -11,6 +11,8 @@ public class PlantDto
     public string? Variety { get; set; }
     
     public string? Description { get; set; }
+
+    public string? ImagePath { get; set; }
     
     public DateTime PlantingDate { get; set; }
     

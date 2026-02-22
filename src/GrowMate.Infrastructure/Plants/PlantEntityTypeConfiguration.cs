@@ -28,6 +28,10 @@ public sealed class PlantEntityTypeConfiguration : IEntityTypeConfiguration<Plan
         builder.Property(p => p.Description)
             .HasComment("Описание / Заметки");
 
+        builder.Property(p => p.ImagePath)
+            .HasMaxLength(500)
+            .HasComment("Путь к изображению растения");
+
         builder.Property(p => p.PlantingDate)
             .IsRequired()
             .HasColumnType("date")

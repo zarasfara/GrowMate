@@ -1,6 +1,13 @@
 ﻿FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
-USER $APP_UID
+ARG APP_UID=1000
+ARG APP_GID=1000
 WORKDIR /app
+# Ensure uploads directory exists and is writable by the runtime user
+RUN mkdir -p /app/wwwroot/uploads/plants \
+ && chown -R ${APP_UID}:${APP_GID} /app/wwwroot || true \
+ && chmod -R 0755 /app/wwwroot || true
+
+USER ${APP_UID}
 EXPOSE 8080
 EXPOSE 8081
 

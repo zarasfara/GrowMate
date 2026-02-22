@@ -29,6 +29,7 @@ public class PlantService
                 Name = p.Name,
                 Variety = p.Variety,
                 Description = p.Description,
+                ImagePath = p.ImagePath,
                 PlantingDate = p.PlantingDate,
                 Type = p.Type,
                 Quantity = p.Quantity,
@@ -53,6 +54,7 @@ public class PlantService
                 Name = p.Name,
                 Variety = p.Variety,
                 Description = p.Description,
+                ImagePath = p.ImagePath,
                 PlantingDate = p.PlantingDate,
                 Type = p.Type,
                 Quantity = p.Quantity,
@@ -77,6 +79,7 @@ public class PlantService
                 Name = p.Name,
                 Variety = p.Variety,
                 Description = p.Description,
+                ImagePath = p.ImagePath,
                 PlantingDate = p.PlantingDate,
                 Type = p.Type,
                 Quantity = p.Quantity,
@@ -98,6 +101,7 @@ public class PlantService
             Name = dto.Name,
             Variety = dto.Variety,
             Description = dto.Description,
+            ImagePath = dto.ImagePath,
             PlantingDate = dto.PlantingDate,
             Type = dto.Type,
             Quantity = dto.Quantity,
@@ -130,6 +134,7 @@ public class PlantService
         plant.Name = dto.Name;
         plant.Variety = dto.Variety;
         plant.Description = dto.Description;
+        plant.ImagePath = dto.ImagePath;
         plant.PlantingDate = dto.PlantingDate;
         plant.Type = dto.Type;
         plant.Quantity = dto.Quantity;
