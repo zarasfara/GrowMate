@@ -1,7 +1,9 @@
+using GrowMate.Domain.CalendarEvents;
 using GrowMate.Domain.GardenBeds;
 using GrowMate.Domain.GardenTasks;
 using GrowMate.Domain.Plants;
 using GrowMate.Domain.Users;
+using GrowMate.Infrastructure.CalendarEvents;
 using GrowMate.Infrastructure.GardenBeds;
 using GrowMate.Infrastructure.GardenTasks;
 using GrowMate.Infrastructure.Plants;
@@ -25,6 +27,8 @@ public sealed class ApplicationContext : IdentityDbContext<User>
 
     public DbSet<GardenTask> GardenTasks { get; set; }
 
+    public DbSet<CalendarEvent> CalendarEvents { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -33,5 +37,6 @@ public sealed class ApplicationContext : IdentityDbContext<User>
         modelBuilder.ApplyConfiguration(new PlantTemplateEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PlantEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new GardenTaskEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new CalendarEventEntityTypeConfiguration());
     }
 }

@@ -260,4 +260,52 @@ body {
   }
 }
 
+.calendar-weekdays,
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.calendar-day {
+  min-height: 5rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.4rem;
+}
+
+.calendar-day.empty {
+  border: 1px dashed var(--bs-border-color);
+  background: transparent;
+}
+
+.calendar-day.selected {
+  border-color: var(--bs-primary);
+}
+
+.calendar-day.today .day-number {
+  font-weight: 700;
+}
+
+.day-number {
+  font-size: 0.95rem;
+}
+
+.day-badge {
+  align-self: flex-end;
+}
+
+.reminders-container {
+  width: min(24rem, 100vw - 1.5rem);
+  z-index: 1085;
+}
+
+.reminder-item {
+  cursor: pointer;
+}
+
 

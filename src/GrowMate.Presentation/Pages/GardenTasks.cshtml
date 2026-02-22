@@ -1,0 +1,426 @@
+@page
+@model GrowMate.Presentation.Pages.GardenTasksModel
+@{
+    ViewData["Title"] = "Календарь";
+}
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css">
+
+<div class="container py-4">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="mb-0 fw-bold">Добавить событие</h5>
+                </div>
+                <div class="card-body">
+                    <form id="eventForm">
+                        <div class="mb-3">
+                            <label for="eventTitle" class="form-label">Событие</label>
+                            <input id="eventTitle" class="form-control" maxlength="120" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="eventType" class="form-label">Тип события</label>
+                            <select id="eventType" class="form-select" required>
+                                <option value="watering">💧 Полив</option>
+                                <option value="fertilizing">🌾 Подкормка</option>
+                                <option value="treatment">🛡️ Обработка</option>
+                                <option value="planting">🌱 Посадка</option>
+                                <option value="pruning">✂️ Обрезка</option>
+                                <option value="harvest">🧺 Сбор урожая</option>
+                                <option value="other">📝 Другое</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="eventDateTime" class="form-label">Дата и время</label>
+                            <input id="eventDateTime" type="datetime-local" class="form-control" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="eventNotes" class="form-label">Описание</label>
+                            <textarea id="eventNotes" class="form-control" rows="3" placeholder="Что нужно сделать?"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Сохранить</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 py-3">
+                    <h5 class="mb-0 fw-bold" id="selectedDateLabel">События на день</h5>
+                </div>
+                <div class="card-body">
+                    <div id="selectedDayEvents" class="d-grid gap-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="antiforgery-form" class="d-none">
+    @Html.AntiForgeryToken()
+</form>
+
+<div id="remindersContainer" class="position-fixed bottom-0 end-0 p-3 reminders-container"></div>
+
+<div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="eventModalTitle">Событие</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2"><strong>Тип:</strong> <span id="eventModalType"></span></p>
+                <p class="mb-2"><strong>Когда:</strong> <span id="eventModalDateTime"></span></p>
+                <p class="mb-0"><strong>Описание:</strong> <span id="eventModalNotes"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/locales-all.global.min.js"></script>
+    <script>
+        (() => {
+            const typeMeta = {
+                watering: { label: "Полив", emoji: "💧", color: "#0d6efd" },
+                fertilizing: { label: "Подкормка", emoji: "🌾", color: "#198754" },
+                treatment: { label: "Обработка", emoji: "🛡️", color: "#dc3545" },
+                planting: { label: "Посадка", emoji: "🌱", color: "#20c997" },
+                pruning: { label: "Обрезка", emoji: "✂️", color: "#fd7e14" },
+                harvest: { label: "Сбор урожая", emoji: "🧺", color: "#6f42c1" },
+                other: { label: "Другое", emoji: "📝", color: "#6c757d" }
+            };
+
+            const calendarEl = document.getElementById("calendar");
+            const selectedDateLabel = document.getElementById("selectedDateLabel");
+            const selectedDayEvents = document.getElementById("selectedDayEvents");
+            const remindersContainer = document.getElementById("remindersContainer");
+
+            const eventForm = document.getElementById("eventForm");
+            const eventTitleInput = document.getElementById("eventTitle");
+            const eventTypeInput = document.getElementById("eventType");
+            const eventDateTimeInput = document.getElementById("eventDateTime");
+            const eventNotesInput = document.getElementById("eventNotes");
+
+            const antiforgeryToken = document.querySelector("#antiforgery-form input[name='__RequestVerificationToken']")?.value;
+
+            const eventDetailsModal = new bootstrap.Modal(document.getElementById("eventDetailsModal"));
+
+            const now = new Date();
+            let selectedDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const pageOpenedAt = new Date();
+            const shownReminderIds = new Set();
+            let events = [];
+            let calendar;
+
+            initDateTimeInput();
+            initialize();
+
+            setInterval(checkReminders, 15000);
+
+            eventForm.addEventListener("submit", async (e) => {
+                e.preventDefault();
+
+                const title = eventTitleInput.value.trim();
+                const type = eventTypeInput.value;
+                const scheduledAt = eventDateTimeInput.value;
+                const notes = eventNotesInput.value.trim();
+
+                if (!title || !scheduledAt) {
+                    return;
+                }
+
+                const newEvent = await createEventOnServer({
+                    title,
+                    type,
+                    scheduledAt: new Date(scheduledAt).toISOString(),
+                    notes
+                });
+
+                if (!newEvent) {
+                    return;
+                }
+
+                events.push(newEvent);
+                addEventToCalendar(newEvent);
+
+                const dt = new Date(scheduledAt);
+                selectedDate = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
+                calendar.gotoDate(selectedDate);
+
+                eventForm.reset();
+                initDateTimeInput();
+                renderSelectedDayEvents();
+            });
+
+            async function initialize() {
+                events = await loadEventsFromServer();
+                initializeCalendar();
+                renderSelectedDayEvents();
+                checkReminders();
+            }
+
+            function initializeCalendar() {
+                const initialEvents = events.map(toCalendarEvent);
+
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    locale: "ru",
+                    initialView: "dayGridMonth",
+                    firstDay: 1,
+                    selectable: true,
+                    height: "auto",
+                    headerToolbar: {
+                        left: "prev,next today",
+                        center: "title",
+                        right: "dayGridMonth,timeGridWeek,timeGridDay"
+                    },
+                    buttonText: {
+                        today: "Сегодня",
+                        month: "Месяц",
+                        week: "Неделя",
+                        day: "День"
+                    },
+                    events: initialEvents,
+                    dateClick(info) {
+                        selectedDate = new Date(info.date.getFullYear(), info.date.getMonth(), info.date.getDate());
+                        renderSelectedDayEvents();
+
+                        const preset = new Date(info.date);
+                        preset.setHours(new Date().getHours(), new Date().getMinutes(), 0, 0);
+                        eventDateTimeInput.value = toDateTimeLocalValue(preset);
+                    },
+                    eventClick(info) {
+                        const eventItem = info.event.extendedProps.original;
+                        if (!eventItem) {
+                            return;
+                        }
+
+                        selectedDate = new Date(info.event.start);
+                        renderSelectedDayEvents();
+                        openDetails(eventItem);
+                    }
+                });
+
+                calendar.render();
+            }
+
+            function initDateTimeInput() {
+                const dt = new Date();
+                dt.setSeconds(0, 0);
+                eventDateTimeInput.value = toDateTimeLocalValue(dt);
+            }
+
+            async function loadEventsFromServer() {
+                try {
+                    const response = await fetch("?handler=Events", {
+                        method: "GET",
+                        headers: {
+                            "Accept": "application/json"
+                        }
+                    });
+
+                    if (!response.ok) {
+                        return [];
+                    }
+
+                    const data = await response.json();
+                    return Array.isArray(data) ? data : [];
+                } catch {
+                    return [];
+                }
+            }
+
+            async function createEventOnServer(payload) {
+                try {
+                    const response = await fetch("?handler=Events", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "RequestVerificationToken": antiforgeryToken ?? ""
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        return null;
+                    }
+
+                    return await response.json();
+                } catch {
+                    return null;
+                }
+            }
+
+            function renderSelectedDayEvents() {
+                const dayKey = toDayKey(selectedDate);
+                const dayEvents = events
+                    .filter(e => toDayKey(new Date(e.scheduledAt)) === dayKey)
+                    .sort((a, b) => new Date(a.scheduledAt) - new Date(b.scheduledAt));
+
+                selectedDateLabel.textContent = `События на ${selectedDate.toLocaleDateString("ru-RU", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                })}`;
+
+                selectedDayEvents.innerHTML = "";
+
+                if (!dayEvents.length) {
+                    selectedDayEvents.innerHTML = '<div class="text-muted">На выбранный день событий нет.</div>';
+                    return;
+                }
+
+                for (const eventItem of dayEvents) {
+                    const meta = typeMeta[eventItem.type] ?? typeMeta.other;
+                    const card = document.createElement("button");
+                    card.type = "button";
+                    card.className = "btn btn-outline-secondary text-start p-3";
+                    card.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="fw-semibold">${meta.emoji} ${escapeHtml(eventItem.title)}</div>
+                                <div class="small text-muted">${meta.label}</div>
+                            </div>
+                            <span class="small text-muted">${formatTime(eventItem.scheduledAt)}</span>
+                        </div>
+                    `;
+
+                    card.addEventListener("click", () => openDetails(eventItem));
+                    selectedDayEvents.appendChild(card);
+                }
+            }
+
+            function checkReminders() {
+                const nowDate = new Date();
+                const dueEvents = events.filter(e => {
+                    const eventDate = new Date(e.scheduledAt);
+                    return !shownReminderIds.has(e.id)
+                        && eventDate >= pageOpenedAt
+                        && eventDate <= nowDate;
+                });
+
+                if (!dueEvents.length) {
+                    return;
+                }
+
+                for (const eventItem of dueEvents) {
+                    showReminder(eventItem);
+                    shownReminderIds.add(eventItem.id);
+                }
+            }
+
+            function showReminder(eventItem) {
+                const meta = typeMeta[eventItem.type] ?? typeMeta.other;
+                const reminder = document.createElement("div");
+                reminder.className = "alert alert-warning shadow-sm mb-2 reminder-item";
+                reminder.role = "button";
+                reminder.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center gap-2">
+                        <div>
+                            <div class="fw-semibold">${meta.emoji} ${escapeHtml(eventItem.title)}</div>
+                            <div class="small">${formatDateTime(eventItem.scheduledAt)}</div>
+                        </div>
+                        <button type="button" class="btn-close"></button>
+                    </div>
+                `;
+
+                reminder.addEventListener("click", () => openDetails(eventItem));
+
+                const closeButton = reminder.querySelector(".btn-close");
+                closeButton.addEventListener("click", (e) => {
+                    e.stopPropagation();
+                    reminder.remove();
+                });
+
+                remindersContainer.appendChild(reminder);
+            }
+
+            function openDetails(eventItem) {
+                const meta = typeMeta[eventItem.type] ?? typeMeta.other;
+                document.getElementById("eventModalTitle").textContent = eventItem.title;
+                document.getElementById("eventModalType").textContent = `${meta.emoji} ${meta.label}`;
+                document.getElementById("eventModalDateTime").textContent = formatDateTime(eventItem.scheduledAt);
+                document.getElementById("eventModalNotes").textContent = eventItem.notes || "—";
+                eventDetailsModal.show();
+            }
+
+            function toCalendarEvent(eventItem) {
+                const meta = typeMeta[eventItem.type] ?? typeMeta.other;
+                return {
+                    id: String(eventItem.id),
+                    title: `${meta.emoji} ${eventItem.title}`,
+                    start: eventItem.scheduledAt,
+                    allDay: false,
+                    backgroundColor: meta.color,
+                    borderColor: meta.color,
+                    original: eventItem
+                };
+            }
+
+            function addEventToCalendar(eventItem) {
+                if (!calendar) {
+                    return;
+                }
+
+                calendar.addEvent(toCalendarEvent(eventItem));
+            }
+
+            function toDayKey(date) {
+                return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+            }
+
+            function isSameDay(a, b) {
+                return a.getFullYear() === b.getFullYear()
+                    && a.getMonth() === b.getMonth()
+                    && a.getDate() === b.getDate();
+            }
+
+            function toDateTimeLocalValue(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                const hours = String(date.getHours()).padStart(2, "0");
+                const minutes = String(date.getMinutes()).padStart(2, "0");
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            function formatTime(value) {
+                return new Date(value).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+            }
+
+            function formatDateTime(value) {
+                return new Date(value).toLocaleString("ru-RU", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+            }
+
+            function escapeHtml(value) {
+                return value
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }
+        })();
+    </script>
+}
