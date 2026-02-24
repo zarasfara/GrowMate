@@ -1,4 +1,4 @@
-﻿using GrowMate.Domain.Plants;
+﻿﻿using GrowMate.Domain.Plants;
 using System.ComponentModel.DataAnnotations;
 
 namespace GrowMate.Applicatoin.DTOs;
@@ -17,6 +17,8 @@ public class UpdatePlantDto
     public string? Description { get; set; }
 
     public string? ImagePath { get; set; }
+
+    public List<string> NewImagePaths { get; set; } = [];
     
     [Required(ErrorMessage = "Дата посадки обязательна")]
     [DataType(DataType.Date)]
@@ -48,5 +50,3 @@ public class UpdatePlantDto
         return ValidationResult.Success;
     }
 }
-
-

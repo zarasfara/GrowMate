@@ -50,4 +50,6 @@ public sealed class Plant
     public GardenBed? GardenBed { get; set; }
 
     public ICollection<GardenTask> Tasks { get; set; } = [];
+
+    public ICollection<PlantImage> Images { get; set; } = [];
 }

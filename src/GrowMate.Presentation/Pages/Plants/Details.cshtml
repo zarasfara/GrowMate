@@ -34,7 +34,20 @@
                 </div>
 
                 <div class="card-body">
-                    @if (!string.IsNullOrWhiteSpace(Model.Plant.ImagePath))
+                    @if (Model.Plant.ImagePaths != null && Model.Plant.ImagePaths.Any())
+                    {
+                        <div class="row g-3 mb-4">
+                            @foreach (var path in Model.Plant.ImagePaths)
+                            {
+                                <div class="col-6 col-md-4">
+                                    <a href="@path" target="_blank" class="d-block">
+                                        <img src="@path" alt="Фото @Model.Plant.Name" class="img-fluid rounded border shadow-sm" style="width: 100%; height: 200px; object-fit: cover;" />
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(Model.Plant.ImagePath))
                     {
                         <div class="text-center mb-4">
                             <img src="@Model.Plant.ImagePath" alt="Фото @Model.Plant.Name" class="img-fluid rounded border shadow-sm" style="max-height: 320px; object-fit: cover;" />

@@ -23,6 +23,8 @@ public sealed class ApplicationContext : IdentityDbContext<User>
 
     public DbSet<Plant> Plants { get; set; }
 
+    public DbSet<PlantImage> PlantImages { get; set; }
+
     public DbSet<PlantTemplate> PlantTemplates { get; set; }
 
     public DbSet<GardenTask> GardenTasks { get; set; }
@@ -36,6 +38,7 @@ public sealed class ApplicationContext : IdentityDbContext<User>
         modelBuilder.ApplyConfiguration(new GardenBedEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PlantTemplateEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new PlantEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new PlantImageEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new GardenTaskEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new CalendarEventEntityTypeConfiguration());
     }
