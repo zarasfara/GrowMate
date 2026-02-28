@@ -23,6 +23,7 @@ public class PlantService
             .Where(p => p.UserId == userId)
             .Include(p => p.GardenBed)
             .Include(p => p.Template)
+            .Include(p => p.Images)
             .Select(p => new PlantDto
             {
                 Id = p.Id,
@@ -30,6 +31,7 @@ public class PlantService
                 Variety = p.Variety,
                 Description = p.Description,
                 ImagePath = p.ImagePath,
+                ImagePaths = p.Images.Select(i => i.Path).ToList(),
                 PlantingDate = p.PlantingDate,
                 Type = p.Type,
                 Quantity = p.Quantity,
@@ -48,6 +50,7 @@ public class PlantService
             .Where(p => p.GardenBedId == gardenBedId && p.UserId == userId)
             .Include(p => p.GardenBed)
             .Include(p => p.Template)
+            .Include(p => p.Images)
             .Select(p => new PlantDto
             {
                 Id = p.Id,
@@ -55,6 +58,7 @@ public class PlantService
                 Variety = p.Variety,
                 Description = p.Description,
                 ImagePath = p.ImagePath,
+                ImagePaths = p.Images.Select(i => i.Path).ToList(),
                 PlantingDate = p.PlantingDate,
                 Type = p.Type,
                 Quantity = p.Quantity,
@@ -73,6 +77,7 @@ public class PlantService
             .Where(p => p.Id == id && p.UserId == userId)
             .Include(p => p.GardenBed)
             .Include(p => p.Template)
+            .Include(p => p.Images)
             .Select(p => new PlantDto
             {
                 Id = p.Id,
@@ -80,6 +85,7 @@ public class PlantService
                 Variety = p.Variety,
                 Description = p.Description,
                 ImagePath = p.ImagePath,
+                ImagePaths = p.Images.Select(i => i.Path).ToList(),
                 PlantingDate = p.PlantingDate,
                 Type = p.Type,
                 Quantity = p.Quantity,
@@ -101,14 +107,15 @@ public class PlantService
             Name = dto.Name,
             Variety = dto.Variety,
             Description = dto.Description,
-            ImagePath = dto.ImagePath,
+            ImagePath = dto.ImagePaths.FirstOrDefault() ?? dto.ImagePath,
             PlantingDate = dto.PlantingDate,
             Type = dto.Type,
             Quantity = dto.Quantity,
             IsUnique = dto.IsUnique,
             PlantTemplateId = dto.PlantTemplateId,
             GardenBedId = dto.GardenBedId,
-            UserId = userId
+            UserId = userId,
+            Images = dto.ImagePaths.Select(path => new PlantImage { Path = path }).ToList()
         };
 
         _context.Plants.Add(plant);
@@ -123,6 +130,7 @@ public class PlantService
         _logger.LogInformation("Updating plant with ID: {PlantId}", dto.Id);
 
         var plant = await _context.Plants
+            .Include(p => p.Images)
             .FirstOrDefaultAsync(p => p.Id == dto.Id && p.UserId == userId);
 
         if (plant == null)
@@ -134,13 +142,26 @@ public class PlantService
         plant.Name = dto.Name;
         plant.Variety = dto.Variety;
         plant.Description = dto.Description;
-        plant.ImagePath = dto.ImagePath;
+        plant.ImagePath = dto.ImagePath ?? plant.ImagePath;
         plant.PlantingDate = dto.PlantingDate;
         plant.Type = dto.Type;
         plant.Quantity = dto.Quantity;
         plant.IsUnique = dto.IsUnique;
         plant.PlantTemplateId = dto.PlantTemplateId;
         plant.GardenBedId = dto.GardenBedId;
+
+        if (dto.NewImagePaths.Count > 0)
+        {
+            foreach (var path in dto.NewImagePaths)
+            {
+                plant.Images.Add(new PlantImage { Path = path });
+            }
+
+            if (string.IsNullOrWhiteSpace(plant.ImagePath))
+            {
+                plant.ImagePath = dto.NewImagePaths.First();
+            }
+        }
 
         await _context.SaveChangesAsync();
 
@@ -168,6 +189,3 @@ public class PlantService
         return true;
     }
 }
-
-
-

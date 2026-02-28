@@ -14,6 +14,8 @@ public class PlantDto
 
     public string? ImagePath { get; set; }
     
+    public List<string> ImagePaths { get; set; } = new();
+    
     public DateTime PlantingDate { get; set; }
     
     public PlantType Type { get; set; }
@@ -32,5 +34,3 @@ public class PlantDto
     
     public int DaysFromPlanting => (DateTime.Now - PlantingDate).Days;
 }
-
-

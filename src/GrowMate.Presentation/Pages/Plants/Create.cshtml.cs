@@ -1,4 +1,4 @@
-﻿using GrowMate.Applicatoin.DTOs;
+﻿﻿using GrowMate.Applicatoin.DTOs;
 using GrowMate.Applicatoin.Services;
 using GrowMate.Application.Services;
 using GrowMate.Domain.Plants;
@@ -45,7 +45,7 @@ public class CreateModel : PageModel
     public List<SelectListItem> PlantTypes { get; set; } = [];
 
     [BindProperty]
-    public IFormFile? PlantImage { get; set; }
+    public List<IFormFile> PlantImages { get; set; } = [];
 
     public async Task<IActionResult> OnGetAsync(int? gardenBedId)
     {
@@ -81,9 +81,9 @@ public class CreateModel : PageModel
             ModelState.AddModelError("NewPlant.PlantingDate", "Дата посадки не может быть в будущем");
         }
 
-        if (PlantImage is not null)
+        if (PlantImages.Count > 0)
         {
-            ValidateImage(PlantImage, nameof(PlantImage));
+            ValidateImages(PlantImages, nameof(PlantImages));
         }
 
         if (!ModelState.IsValid)
@@ -94,7 +94,7 @@ public class CreateModel : PageModel
 
         try
         {
-            NewPlant.ImagePath = await SaveImageAsync(PlantImage);
+            NewPlant.ImagePaths = await SaveImagesAsync(PlantImages);
             await _plantService.CreatePlantAsync(NewPlant, userId);
             TempData["SuccessMessage"] = "Посадка успешно создана!";
             return RedirectToPage("/Plants/Index");
@@ -157,6 +157,26 @@ public class CreateModel : PageModel
         return $"/uploads/plants/{fileName}";
     }
 
+    private async Task<List<string>> SaveImagesAsync(IEnumerable<IFormFile> files)
+    {
+        var savedPaths = new List<string>();
+        foreach (var file in files)
+        {
+            if (file.Length == 0)
+            {
+                continue;
+            }
+
+            var savedPath = await SaveImageAsync(file);
+            if (!string.IsNullOrWhiteSpace(savedPath))
+            {
+                savedPaths.Add(savedPath);
+            }
+        }
+
+        return savedPaths;
+    }
+
     private void ValidateImage(IFormFile file, string key)
     {
         var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".webp" };
@@ -173,8 +193,12 @@ public class CreateModel : PageModel
             ModelState.AddModelError(key, "Размер файла не должен превышать 5 MB.");
         }
     }
+
+    private void ValidateImages(IEnumerable<IFormFile> files, string key)
+    {
+        foreach (var file in files)
+        {
+            ValidateImage(file, key);
+        }
+    }
 }
-
-
-
-

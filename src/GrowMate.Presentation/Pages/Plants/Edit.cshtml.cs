@@ -40,6 +40,11 @@ public class EditModel : PageModel
     [BindProperty]
     public IFormFile? PlantImage { get; set; }
 
+    [BindProperty]
+    public List<IFormFile> PlantImages { get; set; } = [];
+
+    public List<string> ExistingImagePaths { get; set; } = [];
+
     public List<SelectListItem> GardenBeds { get; set; } = [];
     public List<SelectListItem> PlantTypes { get; set; } = [];
 
@@ -74,6 +79,13 @@ public class EditModel : PageModel
             GardenBedId = plant.GardenBedId
         };
 
+        ExistingImagePaths = plant.ImagePaths;
+
+        if (ExistingImagePaths.Count == 0 && !string.IsNullOrWhiteSpace(plant.ImagePath))
+        {
+            ExistingImagePaths = new List<string> { plant.ImagePath };
+        }
+
         await LoadSelectLists(userId);
 
         return Page();
@@ -99,6 +111,11 @@ public class EditModel : PageModel
             ValidateImage(PlantImage, nameof(PlantImage));
         }
 
+        if (PlantImages.Count > 0)
+        {
+            ValidateImages(PlantImages, nameof(PlantImages));
+        }
+
         if (!ModelState.IsValid)
         {
             await LoadSelectLists(userId);
@@ -114,6 +131,8 @@ public class EditModel : PageModel
                 oldImagePath = currentPlant?.ImagePath;
                 EditPlant.ImagePath = await SaveImageAsync(PlantImage);
             }
+
+            EditPlant.NewImagePaths = await SaveImagesAsync(PlantImages);
 
             var result = await _plantService.UpdatePlantAsync(EditPlant, userId);
             if (result)
@@ -191,6 +210,26 @@ public class EditModel : PageModel
         return $"/uploads/plants/{fileName}";
     }
 
+    private async Task<List<string>> SaveImagesAsync(IEnumerable<IFormFile> files)
+    {
+        var savedPaths = new List<string>();
+        foreach (var file in files)
+        {
+            if (file.Length == 0)
+            {
+                continue;
+            }
+
+            var savedPath = await SaveImageAsync(file);
+            if (!string.IsNullOrWhiteSpace(savedPath))
+            {
+                savedPaths.Add(savedPath);
+            }
+        }
+
+        return savedPaths;
+    }
+
     private void DeleteImageIfExists(string? imagePath)
     {
         if (string.IsNullOrWhiteSpace(imagePath))
@@ -231,8 +270,12 @@ public class EditModel : PageModel
             ModelState.AddModelError(key, "Размер файла не должен превышать 5 MB.");
         }
     }
+
+    private void ValidateImages(IEnumerable<IFormFile> files, string key)
+    {
+        foreach (var file in files)
+        {
+            ValidateImage(file, key);
+        }
+    }
 }
-
-
-
-
